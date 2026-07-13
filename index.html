@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오사카 한여름 2박3일 · 7/31–8/2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{
+  --paper:#F6F7F4; --ink:#22253A;
+  --indigo:#2C4770; --indigo-deep:#1B2C4A;
+  --gold:#A8802C; --vermil:#C2452D; --mizu:#4F7EA3;
+  --line:#C9CFD8; --soft:#EDEFEA;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans KR',-apple-system,sans-serif;font-size:15px;line-height:1.6}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px 80px}
+
+/* ── 마스트헤드 ── */
+header{border-bottom:3px double var(--indigo-deep);padding:28px 0 18px;margin-bottom:0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--gold);text-transform:uppercase}
+h1{font-family:'Gowun Batang',serif;font-weight:700;font-size:clamp(26px,5vw,38px);line-height:1.25;margin:6px 0 4px}
+.subtitle{color:#5A5F72;font-size:13.5px}
+.subtitle b{color:var(--indigo)}
+.flightline{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-family:var(--mono);font-size:12.5px;color:var(--indigo-deep)}
+.flightline span{border-left:3px solid var(--gold);padding-left:8px}
+
+/* ── 탭 ── */
+nav{position:sticky;top:0;background:var(--paper);z-index:1000;border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+nav::-webkit-scrollbar{display:none}
+nav button{background:none;border:none;font-family:inherit;font-size:14px;font-weight:500;color:#6B7080;padding:14px 13px 12px;cursor:pointer;border-bottom:2px solid transparent}
+nav button.on{color:var(--indigo-deep);border-bottom-color:var(--vermil);font-weight:600}
+nav button.temp{color:#8A8FA0}
+nav button.temp::after{content:'임시';font-size:9.5px;color:var(--vermil);vertical-align:super;margin-left:2px}
+nav button:focus-visible{outline:2px solid var(--mizu);outline-offset:-2px}
+
+section.tab{display:none;padding-top:26px}
+section.tab.on{display:block}
+h2{font-family:'Gowun Batang',serif;font-size:21px;margin-bottom:4px}
+h3{font-family:'Gowun Batang',serif;font-size:16.5px;margin:26px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+.lead{color:#5A5F72;font-size:13.5px;margin-bottom:18px}
+.note-est{font-size:12px;color:#8A8FA0}
+sup.est{color:var(--gold);font-family:var(--mono);font-size:10px}
+
+/* ── 표 ── */
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0 4px}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-align:left;color:#6B7080;font-weight:500;border-bottom:1.5px solid var(--indigo-deep);padding:6px 8px}
+td{padding:8px;border-bottom:1px solid var(--soft);vertical-align:top}
+td.num,th.num{text-align:right;font-family:var(--mono);font-size:12.5px}
+tr.total td{border-top:2px solid var(--indigo-deep);border-bottom:none;font-weight:600;background:var(--soft)}
+tr.total td.num{font-size:13.5px}
+
+/* ── 노선도 타임라인 (시그니처) ── */
+.rail{position:relative;margin:18px 0 8px;padding-left:0}
+.stop{display:grid;grid-template-columns:52px 26px 1fr;gap:0 10px;position:relative}
+.stop .t{font-family:var(--mono);font-size:12px;color:var(--indigo);padding-top:2px;text-align:right}
+.stop .track{position:relative}
+.stop .track::before{content:'';position:absolute;left:11px;top:0;bottom:0;width:2px;background:var(--indigo)}
+.stop:first-child .track::before{top:8px}
+.stop:last-child .track::before{bottom:auto;height:8px}
+.stop .dot{position:absolute;left:5px;top:5px;width:14px;height:14px;border-radius:50%;background:var(--paper);border:2.5px solid var(--indigo);z-index:1}
+.stop.food .dot{border-color:var(--vermil)}
+.stop.rest .dot{border-color:var(--mizu);background:var(--mizu)}
+.stop.shop .dot{border-color:var(--gold)}
+.stop.move .dot{width:8px;height:8px;left:8px;top:8px;background:var(--indigo);border-width:0}
+.stop .body{padding-bottom:22px}
+.stop .name{font-weight:600;font-size:14.5px}
+.stop.move .name{font-weight:400;color:#5A5F72;font-size:13.5px}
+.stop .desc{font-size:12.5px;color:#6B7080;margin-top:2px}
+.chips{margin-top:5px;display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:11px;padding:1.5px 7px;border:1px solid var(--line);color:#4A4F62;background:#fff}
+.chip.cost{border-color:var(--gold);color:var(--gold)}
+.chip.dur{border-color:var(--mizu);color:var(--mizu)}
+.chip.free{border-color:#9AA;color:#789}
+.daycost{font-family:var(--mono);font-size:12.5px;border:1px solid var(--indigo);background:#fff;padding:10px 14px;margin-top:6px}
+.daycost b{color:var(--indigo-deep)}
+
+/* ── 뱃지·박스 ── */
+.tag{display:inline-block;font-size:10.5px;font-weight:600;padding:1px 7px;letter-spacing:.05em;vertical-align:2px}
+.tag.must{background:var(--vermil);color:#fff}
+.tag.opt{border:1px solid #9AA0B0;color:#6B7080}
+.tag.jjh{background:var(--indigo-deep);color:#F2D28A}
+.tag.pend{border:1px dashed var(--gold);color:var(--gold)}
+.box{border:1px solid var(--line);background:#fff;padding:14px 16px;margin:12px 0;font-size:13.5px}
+.box.warn{border-left:4px solid var(--vermil)}
+.box.info{border-left:4px solid var(--mizu)}
+.box.gold{border-left:4px solid var(--gold)}
+
+/* ── 폼 ── */
+input[type=number],input[type=text]{font-family:var(--mono);font-size:13px;padding:5px 8px;border:1px solid var(--line);background:#fff;width:110px}
+input:focus-visible{outline:2px solid var(--mizu)}
+label.inline{font-size:13px;margin-right:14px;display:inline-flex;align-items:center;gap:6px}
+.checkrow{display:flex;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px solid var(--soft);font-size:13.5px}
+.checkrow input[type=checkbox]{width:16px;height:16px;accent-color:var(--indigo)}
+.checkrow .p{margin-left:auto;font-family:var(--mono);font-size:12.5px;color:#4A4F62}
+.verdict{margin-top:14px;padding:14px 16px;border:1.5px solid var(--indigo-deep);background:#fff}
+.verdict .v-title{font-family:'Gowun Batang',serif;font-weight:700;font-size:16px}
+.verdict.win .v-title{color:var(--vermil)}
+.verdict.lose .v-title{color:var(--indigo)}
+
+/* ── 지도 ── */
+#map{height:420px;border:1px solid var(--indigo-deep);margin:12px 0}
+.poi-list{margin-top:6px}
+.poi{display:flex;gap:10px;padding:10px 4px;border-bottom:1px solid var(--soft);font-size:13.5px;align-items:baseline}
+.poi .nm{font-weight:600;min-width:0}
+.poi .meta{color:#6B7080;font-size:12.5px}
+.poi a{color:var(--mizu);font-size:12px;white-space:nowrap;margin-left:auto}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#5A5F72;margin-top:4px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+
+/* ── 노트 ── */
+.notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.notes-grid{grid-template-columns:1fr}}
+.notepane{border:1px solid var(--indigo-deep);background:#fff}
+.notepane .nh{font-family:'Gowun Batang',serif;font-weight:700;padding:8px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:15px}
+.notepane .sync{font-family:var(--mono);font-size:10.5px;color:#8A8FA0}
+.checklist{min-height:220px;padding:6px 4px}
+.citem{display:flex;align-items:flex-start;gap:9px;padding:8px 10px;border-bottom:1px solid var(--soft);font-size:14px}
+.citem input[type=checkbox]{width:17px;height:17px;accent-color:var(--indigo);margin-top:3px;flex:none}
+.citem .txt{flex:1;word-break:break-word}
+.citem.done .txt{color:#9AA0B0;text-decoration:line-through}
+.citem .del{background:none;border:none;color:#B0B5C2;font-size:16px;cursor:pointer;padding:0 3px;line-height:1;flex:none}
+.citem .del:hover{color:var(--vermil)}
+.cempty{color:#9AA0B0;font-size:13px;padding:18px 12px;text-align:center}
+.addrow{display:flex;gap:0;border-top:1px solid var(--line)}
+.addrow input{flex:1;width:auto;border:none;padding:11px 12px;font-family:inherit;font-size:14px;background:#FCFCFA}
+.addrow .addbtn{border:none;background:var(--indigo-deep);color:#fff;font-family:inherit;font-size:13.5px;font-weight:600;padding:0 18px;cursor:pointer}
+.addrow .addbtn:hover{background:var(--indigo)}
+#fbBanner{font-size:12.5px;padding:10px 14px;margin-bottom:14px;border:1px dashed var(--gold);color:#7A5F1E;background:#FDFBF4}
+#fbBanner.ok{border:1px solid var(--mizu);color:#2F5F80;background:#F2F7FA}
+
+.hotel{border:1px solid var(--line);background:#fff;padding:16px;margin:12px 0}
+.hotel h4{font-family:'Gowun Batang',serif;font-size:15.5px}
+.hotel .rank{font-family:var(--mono);color:var(--gold);font-size:11px;letter-spacing:.15em}
+.hotel table{font-size:12.5px}
+.hotel td{padding:4px 8px}
+ul{padding-left:20px;font-size:13.5px}
+li{margin:4px 0}
+@media(prefers-reduced-motion:no-preference){
+  section.tab.on{animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Osaka · Midsummer · 2 nights 3 days</div>
+  <h1>오사카 한여름 답사기<br>주현 &amp; 예은</h1>
+  <div class="subtitle">2026. 7. 31 (금) – 8. 2 (일) · 티웨이항공 직항 · <b>더위와의 전쟁, 성(城)과의 만남</b></div>
+  <div class="flightline">
+    <span>가는편 TW303 · ICN 10:50 → KIX 13:00</span>
+    <span>오는편 TW304 · KIX 14:30 → ICN 16:30</span>
+    <span>위탁수하물 15kg/인 · 기내 10kg/인</span>
+  </div>
+</header>
+
+<nav id="nav">
+  <button data-tab="budget" class="on">예산 한눈에</button>
+  <button data-tab="days">일자별 동선</button>
+  <button data-tab="food">맛집 지도</button>
+  <button data-tab="pass">패스 손익 분석</button>
+  <button data-tab="notes">우리 노트</button>
+  <button data-tab="plan" class="temp">추천 일정</button>
+</nav>
+
+<!-- ══════════ 예산 ══════════ -->
+<section class="tab on" id="tab-budget">
+  <h2>전체 예산</h2>
+  <p class="lead">항공·숙소 모두 결제 완료된 확정 금액입니다. 일일 경비는 <b>1인 10만원 × 2인 × 3일</b>이며 입장료·시내 교통비를 포함합니다.</p>
+
+  <div class="box info">
+    환율 <input type="number" id="fxRate" value="9.2" step="0.1" min="1"> 원/엔
+    <span class="note-est">— 출발 전 실제 환전 환율로 바꿔 저장하세요. (Firebase 연결 시 자동 저장·공유)</span>
+  </div>
+
+  <h3>총괄</h3>
+  <table id="tblTotal">
+    <thead><tr><th>항목</th><th>상태</th><th class="num">엔 (¥)</th><th class="num">원 (₩)</th></tr></thead>
+    <tbody>
+      <tr><td>항공권 (2인 왕복, 아고다 결제)</td><td>확정</td><td class="num">—</td><td class="num">699,674</td></tr>
+      <tr><td>숙소 2박 — 도미인 오사카 타니마치 (더블, 아고다 결제)</td><td>확정</td>
+        <td class="num">—</td>
+        <td class="num">298,197</td></tr>
+      <tr><td>일일 경비 (10만원 × 2인 × 3일)<br><span class="note-est">입장료 + 시내교통 + 식비 + 잡비 포함</span></td><td>계획</td>
+        <td class="num" id="dailyJpy">—</td><td class="num">600,000</td></tr>
+      <tr class="total"><td colspan="2">총 예산</td><td class="num" id="grandJpy">—</td><td class="num" id="grandKrw">—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>일일 경비 배분 (일자별 고정비 → 자유비)</h3>
+  <p class="lead">일정표의 교통·입장료를 자동 합산해, 하루 20만원(2인) 중 <b>식비·자유 지출로 남는 금액</b>을 계산합니다.</p>
+  <table id="tblDaily">
+    <thead><tr><th>일자</th><th>고정비 내역</th><th class="num">고정 ¥</th><th class="num">고정 ₩</th><th class="num">잔여(자유) ₩</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p class="note-est">※ <sup class="est">예상</sup> 표시는 아직 확정되지 않은 추정치입니다. 요금은 2026.7 조사 기준이며 현지 변동 가능.</p>
+</section>
+
+<!-- ══════════ 일자별 동선 ══════════ -->
+<section class="tab" id="tab-days">
+  <h2>일자별 동선 · 소요 · 비용</h2>
+  <p class="lead">파란 원 = 관광 · 붉은 원 = 식사 · 물빛 원 = 더위 피난처(쉼) · 금색 원 = 쇼핑 · 작은 점 = 이동. 비용 칩은 <b>2인 합계</b> 기준입니다.</p>
+  <div id="daysHost"></div>
+  <div class="hotel">
+    <div class="rank">숙소 확정 · 예약번호 1747245467</div>
+    <h4>도미인 오사카 타니마치 (천연온천) — 7/31–8/2 · 2박 · 더블 금연 · ₩298,197</h4>
+    <table>
+      <tr><td>위치</td><td>다니마치욘초메역 도보 5–6분 · 오사카성 오테몬 도보권 — Day2는 지하철 없이 걸어서 성까지</td></tr>
+      <tr><td>천연온천 대욕장</td><td>이 숙소의 핵심. <b>매일 밤 + Day2 낮 13~16시 폭염 회피 입욕</b>을 일정에 넣어 두었습니다. 사우나 병설</td></tr>
+      <tr><td>요나키소바</td><td>밤 21:30 무료 제공되는 간장 라멘 — 도미인 명물, 놓치지 말 것</td></tr>
+      <tr><td>무료 서비스</td><td>저녁 아이스캔디·아침 야쿠르트(로비, 시간대별) · 목욕 후 휴게 공간</td></tr>
+      <tr><td>조식</td><td>가이센동(해산물 덮밥)을 직접 만드는 조식 뷔페가 유명 · <span class="tag pend">예약 플랜에 조식 포함 여부 아고다에서 확인 필요</span> — 미포함이면 현장 추가 가능</td></tr>
+      <tr><td>코인 세탁</td><td>세탁기 무료·건조기 유료 — 한여름 땀 옷 처리에 유용</td></tr>
+    </table>
+  </div>
+
+  <div class="box gold">
+    <b>오사카성 로드트레인 요금</b> — 성인 편도 400엔 (모리노미야/JO-TERRACE ↔ 호코쿠신사 앞, 09:30–17:30 운행).<br>
+    <b>1인 왕복 800엔 · 2인 왕복 1,600엔</b>. 호코쿠신사 앞에서 천수각까지는 도보 2–3분입니다. 한여름 오사카성 공원 도보 20분을 건너뛰는 최고의 투자.
+  </div>
+</section>
+
+<!-- ══════════ 맛집 지도 ══════════ -->
+<section class="tab" id="tab-food">
+  <h2>맛집 지도 <span class="tag must">필수</span> <span class="tag opt">선택</span> <span class="tag jjh">정준하</span></h2>
+  <p class="lead">핀을 누르면 상세와 구글맵 바로가기가 뜹니다. 목록의 「구글맵」 링크로 네비게이션을 바로 실행할 수 있습니다.</p>
+
+  <div class="box info">
+    <b>정준하 유튜브 맛집 전체 반영 완료</b> — 1탄 4곳(세계에서 제일 한가한 라멘바 · 와라야키야 기타신치 · 만료 히고바시 · 히로시다이 제트) + 2탄 2곳(원조 믹스주스 · 우메키타 플로어).
+    모두 기타·나카노시마·후쿠시마 권역이라 <b>Day2 저녁 동선</b>과 정확히 겹칩니다. 만료는 예약 필수(1–2주 전)이니 지금이 예약 골든타임입니다.
+  </div>
+
+  <div id="map"></div>
+  <div class="legend">
+    <span><i style="background:#C2452D"></i>필수 식사</span>
+    <span><i style="background:#2C4770"></i>선택 식사</span>
+    <span><i style="background:#A8802C"></i>디저트·카페</span>
+    <span><i style="background:#4F7EA3"></i>관광 포인트</span>
+  </div>
+
+  <h3>식사</h3>
+  <div class="poi-list" id="listFood"></div>
+  <h3>디저트 · 카페</h3>
+  <div class="poi-list" id="listDessert"></div>
+</section>
+
+<!-- ══════════ 패스 분석 ══════════ -->
+<section class="tab" id="tab-pass">
+  <h2>패스 손익 분석기</h2>
+  <p class="lead">방문할 곳을 체크하고 지하철 탑승 횟수를 넣으면, <b>개별 결제 vs 주유패스 vs 엔조이 에코 카드</b>를 하루 단위로 비교합니다. 금액은 1인 기준.</p>
+
+  <h3>기준 요금 (2026.7 조사)</h3>
+  <table>
+    <thead><tr><th>패스</th><th class="num">가격 ¥</th><th>포함 내용</th></tr></thead>
+    <tbody>
+      <tr><td>오사카 주유패스 1일권 (디지털)</td><td class="num">3,500</td><td>메트로·시티버스 무제한 + 천수각 등 40여 시설 무료</td></tr>
+      <tr><td>오사카 주유패스 2일권</td><td class="num">5,000</td><td>연속 2일, 위와 동일</td></tr>
+      <tr><td>엔조이 에코 카드 (평일)</td><td class="num">820</td><td>메트로·시티버스 1일 무제한 (입장권 미포함, 일부 시설 할인)</td></tr>
+      <tr><td>엔조이 에코 카드 (토·일·공휴일)</td><td class="num">620</td><td>〃 — 8/1(토)·8/2(일)은 620엔 적용</td></tr>
+      <tr><td>메트로 1회 승차 (참고)</td><td class="num">190–290</td><td>구간별. 시내 이동은 보통 240엔 안팎</td></tr>
+    </tbody>
+  </table>
+
+  <h3>시뮬레이션</h3>
+  <div style="margin:8px 0 12px">
+    <label class="inline">지하철 탑승 <input type="number" id="metroRides" value="4" min="0" style="width:60px"> 회</label>
+    <label class="inline">1회 평균 <input type="number" id="metroFare" value="240" step="10" style="width:70px"> ¥</label>
+    <label class="inline"><input type="checkbox" id="isWeekend" checked> 토·일 (에코카드 620¥)</label>
+  </div>
+  <div id="passChecks"></div>
+  <div class="verdict" id="passVerdict"></div>
+  <p class="note-est" style="margin-top:10px">참고: 이번 일정(천수각 1,200 + 역사박물관 600 + 지하철 4회)만이라면 개별 결제 약 2,760엔으로 주유패스(3,500엔)보다 유리합니다. 우메다 공중정원(1,500엔, 15시 이전 무료입장)·고자부네 뱃놀이(1,500엔)까지 넣으면 주유패스가 역전하니, 체크해서 확인해 보세요.</p>
+</section>
+
+<!-- ══════════ 노트 ══════════ -->
+<section class="tab" id="tab-notes">
+  <h2>우리 노트</h2>
+  <div id="fbBanner">
+    <b>Firebase 미연결 — 로컬 모드로 동작 중.</b> 지금 쓰는 내용은 새로고침하면 사라집니다.
+    실시간 공유 저장을 켜려면 파일 하단 <span style="font-family:var(--mono)">FIREBASE_CONFIG</span>에 설정값을 넣어 주세요. (설정 방법은 채팅 안내 참고)
+  </div>
+  <div class="notes-grid">
+    <div class="notepane">
+      <div class="nh">주현의 체크리스트 <span class="sync" id="syncJ">local</span></div>
+      <div class="checklist" id="listJ"></div>
+      <div class="addrow">
+        <input type="text" id="inJ" placeholder="예: 돈키호테에서 곤약젤리" maxlength="120">
+        <button class="addbtn" data-who="J">추가</button>
+      </div>
+    </div>
+    <div class="notepane">
+      <div class="nh">예은의 체크리스트 <span class="sync" id="syncY">local</span></div>
+      <div class="checklist" id="listY"></div>
+      <div class="addrow">
+        <input type="text" id="inY" placeholder="예: 로드트레인 첫차 시간 확인" maxlength="120">
+        <button class="addbtn" data-who="Y">추가</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 추천 일정 (임시) ══════════ -->
+<section class="tab" id="tab-plan">
+  <h2>추천 일정 · 더위 전략 <span class="tag pend">확정 후 삭제</span></h2>
+  <p class="lead">7월말–8월초 오사카는 최고 35–38℃, 체감 40℃+. 원칙은 하나입니다 — <b>야외는 오전 9–11시와 해질녘, 정오–16시는 실내</b>.</p>
+
+  <h3>더위 피난처 목록 (동선 위에 배치)</h3>
+  <table>
+    <thead><tr><th>피난처</th><th>위치</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td>오사카 역사박물관</td><td>다니마치욘초메역 직결급</td><td>냉방 + 10층에서 천수각 조망 · 600¥ · 오사카성과 세트 동선</td></tr>
+      <tr><td>숙소 대욕장 낮 휴식</td><td>숙소</td><td>13–16시 복귀 → 목욕·낮잠 → 17시 재출발. 한여름 여행의 정석</td></tr>
+      <tr><td>준킷사 아메리칸 (순끽다점)</td><td>도톤보리 옆</td><td>1946년 개업 레트로 킷사텐 · 크림소다 · 고풍스러운 실내</td></tr>
+      <tr><td>난난타운 지하상가</td><td>난바역 직결</td><td>지하로 이동 자체가 피서 · 돈키호테 인근</td></tr>
+      <tr><td>나카노시마 중앙공회당 주변</td><td>요도야바시</td><td>해질녘 산책용 — 강바람 + 다이쇼 시대 건축</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Day 2 대안 비교 (고적 취향 · 인파 회피 기준)</h3>
+  <table>
+    <thead><tr><th>안</th><th>내용</th><th>장점</th><th>유의</th></tr></thead>
+    <tbody>
+      <tr><td><b>A안 (기본)</b><br>오사카성 집중</td><td>오전 오사카성(로드트레인+천수각) → 역사박물관 → 낮 휴식 → 해질녘 나카노시마</td><td>이동 최소 · 냉방 확보 · 숙소 복귀 쉬움</td><td>천수각 내부는 주말 오전도 관광객 있음 (9시 개장 직후 입장 권장)</td></tr>
+      <tr><td><b>B안 (외곽)</b><br>나라 반나절</td><td>오전 긴테츠난바→긴테츠나라(급행 약 40분, 편도 약 680¥<sup class="est">예상</sup>) · 도다이지 대불전·나라공원 → 오후 오사카 복귀 후 휴식</td><td>고찰·대불 — 취향 적중 · 교토보다 한산</td><td>공원이 전부 야외 + 사슴. 폭염일엔 체력 소모 큼. 8시대 출발 필수</td></tr>
+      <tr><td><b>C안 (근교 고적)</b><br>시텐노지 + 스미요시타이샤</td><td>오전 시텐노지(593년 창건, 관광객 적음) → 점심 → 스미요시타이샤(스미요시 대교) → 휴식</td><td>오사카 시내 최고(最古) 사찰·신사 · 한산함 1등</td><td>두 곳 다 야외 비중 높음 — 오전에 몰아서</td></tr>
+    </tbody>
+  </table>
+  <div class="box gold">추천: <b>A안을 기본</b>으로 하고, 당일 아침 기온·컨디션이 좋으면 C안의 시텐노지를 Day1 저녁 이전 또는 Day2 오전에 끼워 넣는 방식. B안(나라)은 이번 폭염 시기엔 차선입니다.</div>
+
+  <h3>준비물 (폭염 특화)</h3>
+  <ul>
+    <li>휴대 선풍기 + 냉감 타월 (현지 조달 가능 — 돈키호테·다이소)</li>
+    <li>이온음료 파우더 (포카리 분말) — 편의점 생수에 타서</li>
+    <li>양산 겸용 우산 — 일본은 남성도 양산 일반적, 체감 -3℃</li>
+    <li>염분 사탕 (塩タブレット) — 편의점 어디나</li>
+  </ul>
+</section>
+
+</div><!-- /wrap -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════
+   FIREBASE 설정 — 사용자가 생성 후 여기에 붙여넣기
+   null 이면 로컬 모드로 동작합니다.
+   ═══════════════════════════════════════════ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDLE9LtVKuNLjheu7wKmX-aLGwgAVb32u0",
+  authDomain: "osaka-2thanniversary.firebaseapp.com",
+  databaseURL: "https://osaka-2thanniversary-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "osaka-2thanniversary",
+  storageBucket: "osaka-2thanniversary.firebasestorage.app",
+  messagingSenderId: "772475628604",
+  appId: "1:772475628604:web:2f916a6e3f2c501436a739"
+};
+/* 예시:
+const FIREBASE_CONFIG = {
+  apiKey: "AIza....",
+  authDomain: "osaka-trip-xxxx.firebaseapp.com",
+  databaseURL: "https://osaka-trip-xxxx-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "osaka-trip-xxxx",
+  storageBucket: "osaka-trip-xxxx.appspot.com",
+  messagingSenderId: "…",
+  appId: "…"
+};
+*/
+
+/* ── 일정 데이터 ──  costJpy = 2인 합계, est = 추정치 */
+const DAYS = [
+ { id:'d1', date:'7/31 (금)', title:'입성 — 도착과 저녁 산책',
+   stops:[
+    {t:'10:50', kind:'move', name:'인천공항 출발 (TW303)', desc:'탑승 3시간 전 도착 권장 · 위탁 15kg/인'},
+    {t:'13:00', kind:'move', name:'간사이공항 도착 → 입국·수하물', desc:'약 60분 예상', dur:'60분'},
+    {t:'14:10', kind:'move', name:'난카이 공항급행 → 난바', desc:'약 45–50분 · 라피트 특급(1,490¥/인)은 15분 단축', costJpy:1940, costLabel:'970¥×2', dur:'50분'},
+    {t:'15:30', kind:'rest', name:'도미인 오사카 타니마치 체크인', desc:'난바→다니마치욘초메 (센니치마에선→다니마치선, 약 15분) · 가장 더운 시간대, 서두르지 않기', costJpy:480, costLabel:'지하철 240¥×2', dur:'15분'},
+    {t:'16:30', kind:'spot', name:'카라호리 상점가 산책', desc:'아케이드 그늘 아래 로컬 상점가 · 관광객 적음 · 숙소(다니마치 기준) 도보권', costJpy:0, dur:'60분'},
+    {t:'18:00', kind:'food', name:'저녁 — 필수 후보: 아이즈야 or 근처 노포', desc:'맛집 지도 탭에서 선택 · 예산 2인 4,000–6,000¥', dur:'90분'},
+    {t:'19:45', kind:'spot', name:'호젠지요코초 → 도톤보리 야경 (짧게)', desc:'돌바닥 골목 호젠지는 조용, 도톤보리는 인파 — 글리코상만 찍고 탈출', costJpy:480, costLabel:'지하철 240¥×2', dur:'60분'},
+    {t:'21:00', kind:'rest', name:'숙소 대욕장', desc:'도미인이라면 21:30 무료 요나키소바까지'},
+   ]},
+ { id:'d2', date:'8/1 (토)', title:'오사카성의 날 — 성곽과 냉방의 교대',
+   stops:[
+    {t:'08:20', kind:'food', name:'조식 — 도미인 가이센동 뷔페', desc:'해산물 덮밥 직접 만들기 · 플랜 미포함 시 현장 추가'},
+    {t:'09:00', kind:'move', name:'오사카성 공원 진입 — 숙소에서 도보', desc:'오테몬(정문)까지 도보 10분 안팎 · 지하철 불필요', costJpy:0},
+    {t:'09:30', kind:'spot', name:'로드트레인 → 호코쿠신사 앞', desc:'첫차 09:30 · 도보 20분 구간을 5분에', costJpy:800, costLabel:'400¥×2', dur:'5분'},
+    {t:'09:45', kind:'spot', name:'오사카성 천수각', desc:'09:00 개장 · 오전이 인파·더위 모두 최소 · 8층 전망대 → 내려오며 관람', costJpy:2400, costLabel:'1,200¥×2', dur:'100분'},
+    {t:'11:30', kind:'spot', name:'로드트레인 복귀', desc:'', costJpy:800, costLabel:'400¥×2', dur:'5분'},
+    {t:'12:00', kind:'food', name:'점심 — 필수 후보: 요시토라 (장어 노포)', desc:'오사카성 인근 100년 장어집 · 2인 5,000–8,000¥', dur:'70분'},
+    {t:'13:30', kind:'rest', name:'오사카 역사박물관 (냉방 피난)', desc:'10층 유리창의 천수각 조망이 백미 · 나니와 궁터 전시', costJpy:1200, costLabel:'600¥×2', dur:'90분'},
+    {t:'15:30', kind:'rest', name:'숙소 낮 휴식 / 대욕장', desc:'가장 위험한 시간대 회피', dur:'90분'},
+    {t:'17:30', kind:'spot', name:'나카노시마 — 중앙공회당·강변', desc:'다이쇼 건축 + 해질녘 강바람 · 사진 명소', costJpy:480, costLabel:'지하철 240¥×2', dur:'80분'},
+    {t:'19:00', kind:'food', name:'저녁 — 세계에서 제일 한가한 라멘바 (정준하 1탄)', desc:'나카노시마 산책에서 도보 직결 · 이름처럼 한산한 2층 라멘바 · 대안: 우메키타 플로어(지하철 1구간)', dur:'70분'},
+    {t:'20:20', kind:'food', name:'(선택) 와라야키야 기타신치 — 짚불 타타키 한잔', desc:'라멘바에서 도보 10분 · 정준하 1탄 · 체력 남을 때만', dur:'60분'},
+    {t:'21:30', kind:'move', name:'숙소 복귀', desc:'요도야바시/기타신치 → 다니마치욘초메', costJpy:480, costLabel:'지하철 240¥×2'},
+   ]},
+ { id:'d3', date:'8/2 (일)', title:'돈키호테 — 쇼핑 후 귀국',
+   stops:[
+    {t:'08:30', kind:'food', name:'조식 · 체크아웃 준비', desc:'짐은 프런트 보관 또는 캐리어 지참'},
+    {t:'09:30', kind:'shop', name:'돈키호테 도톤보리점 (24시간)', desc:'오전이 계산 줄 최소 · 면세 카운터 여권 지참 · 위탁 15kg 한도 유의!', dur:'80분'},
+    {t:'11:00', kind:'move', name:'난바역 → 난카이 공항급행', desc:'11:00~11:10 출발편 탑승 목표', costJpy:1940, costLabel:'970¥×2', dur:'50분'},
+    {t:'12:00', kind:'move', name:'간사이공항 도착 · 체크인/출국', desc:'출발 2.5시간 전 — 여유 충분', dur:'150분'},
+    {t:'14:30', kind:'move', name:'KIX 출발 (TW304) → 16:30 인천 도착', desc:''},
+   ]},
+];
+
+/* ── 맛집·POI 데이터 ── */
+const POIS = [
+ // 식사
+ {cat:'food', tier:'must', name:'세계에서 제일 한가한 라멘바 (世界一暇なラーメン屋)', lat:34.6925, lng:135.4900, note:'나카노시마 2층 라멘바 · 이름부터 취향 저격(한산함) · Day2 저녁 — 나카노시마 산책에서 도보 직결', gm:'https://maps.app.goo.gl/FpXRPqxJLFYkHMih7', jjh:true},
+ {cat:'food', tier:'opt', name:'와라야키야 기타신치 본점 (わらやき屋)', lat:34.6975, lng:135.4975, note:'짚불 타타키(와라야키) 이자카야 · 기타신치 · Day2 라멘 후 2차 후보', gm:'https://maps.app.goo.gl/v9A3cHN2VCkv8nuDA', jjh:true},
+ {cat:'food', tier:'opt', name:'만료 히고바시점 (万両)', lat:34.6900, lng:135.4935, note:'오사카 대표 야키니쿠 명가의 지점 · 예약 필수(1–2주 전) — 예약 성공 시 저녁 일정 승격 추천', gm:'https://maps.app.goo.gl/1oCweowSXNAM2WMK7', jjh:true},
+ {cat:'food', tier:'opt', name:'히로시다이 제트 (弘大Z)', lat:34.6995, lng:135.4790, note:'후쿠시마역 인근 · 정준하 영상 방문지', gm:'https://maps.app.goo.gl/8zPnnvqQLJsmASLw6', jjh:true},
+ {cat:'food', tier:'must', name:'아이즈야 난바 본점', lat:34.6614, lng:135.4993, note:'타코야키 원조(1933) · 소스 없이 먹는 오리지널 · 미슐랭 빕구르망', q:'会津屋 なんば店'},
+ {cat:'food', tier:'must', name:'요시토라 (장어)', lat:34.6822, lng:135.5240, note:'오사카성 인근 100년 노포 장어 전문 · Day2 점심 후보', q:'吉寅 大阪 うなぎ'},
+ {cat:'food', tier:'opt', name:'미즈노 (오코노미야키)', lat:34.6686, lng:135.5023, note:'도톤보리 · 미슐랭 빕구르망 · 웨이팅 30분+ 각오', q:'美津の 道頓堀'},
+ {cat:'food', tier:'opt', name:'잇토쿠 쿠시카츠 도톤보리 에비스바시점', lat:34.6679, lng:135.5013, note:'신세카이식 쿠시카츠를 난바에서 · 합리적 가격', q:'串カツいっとく 道頓堀戎橋店'},
+ {cat:'food', tier:'opt', name:'우메키타 플로어', lat:34.7059, lng:135.4937, note:'그랜드 프론트 오사카 북관 6F 식당가 · Day2 저녁 후보', q:'UMEKITA FLOOR グランフロント大阪', jjh:true},
+ {cat:'food', tier:'opt', name:'하나다코 (타코야키)', lat:34.7025, lng:135.4990, note:'우메다 · 네기마요 타코야키 · 우메키타 가는 길에', q:'はなだこ 梅田'},
+ // 디저트·카페
+ {cat:'dessert', tier:'must', name:'원조 믹스주스 오사카우메다 본점', lat:34.7027, lng:135.4977, note:'한신 우메다 지하 · 믹스주스 발상지 · 한 잔 300¥ 안팎', q:'元祖ミックスジュース 大阪梅田本店', jjh:true},
+ {cat:'dessert', tier:'opt', name:'리쿠로 오지상 치즈케이크 난바 본점', lat:34.6656, lng:135.5019, note:'갓 구운 수플레 치즈케이크 · 흔들리는 도장 세리머니', q:'りくろーおじさんの店 なんば本店'},
+ {cat:'dessert', tier:'opt', name:'준킷사 아메리칸', lat:34.6689, lng:135.5019, note:'1946년 레트로 킷사텐 · 크림소다 · 냉방 피난처 겸용', q:'純喫茶アメリカン 道頓堀'},
+ // 관광 포인트 (지도 참고용)
+ {cat:'spot', tier:'', name:'오사카성 천수각', lat:34.6873, lng:135.5262, note:'Day2 오전 · 입장 1,200¥', q:'大阪城天守閣'},
+ {cat:'spot', tier:'', name:'오사카 역사박물관', lat:34.6826, lng:135.5209, note:'냉방 피난처 · 600¥', q:'大阪歴史博物館'},
+ {cat:'spot', tier:'', name:'카라호리 상점가', lat:34.6740, lng:135.5180, note:'Day1 저녁 산책 · 로컬 아케이드', q:'空堀商店街'},
+ {cat:'spot', tier:'', name:'호젠지요코초', lat:34.6678, lng:135.5030, note:'물이끼 부동명왕 · 조용한 돌바닥 골목', q:'法善寺横丁'},
+ {cat:'spot', tier:'', name:'나카노시마 중앙공회당', lat:34.6934, lng:135.5048, note:'Day2 해질녘 · 다이쇼 건축', q:'大阪市中央公会堂'},
+ {cat:'spot', tier:'', name:'돈키호테 도톤보리점', lat:34.6687, lng:135.5015, note:'Day3 오전 쇼핑 · 24시간 · 면세', q:'ドン・キホーテ 道頓堀店'},
+ {cat:'spot', tier:'', name:'시텐노지 (C안)', lat:34.6533, lng:135.5164, note:'593년 창건 · 시내 최고(最古) 사찰 · 한산', q:'四天王寺'},
+];
+
+/* ── 패스 분석 데이터 ── */
+const ATTR = [
+ {name:'오사카성 천수각', price:1200, on:true},
+ {name:'오사카 역사박물관', price:600, on:true},
+ {name:'우메다 스카이빌딩 공중정원 (패스는 15시 이전만 무료)', price:1500, on:false},
+ {name:'오사카성 고자부네 뱃놀이', price:1500, on:false},
+ {name:'츠텐카쿠 전망대', price:1200, on:false},
+ {name:'텐노지 동물원', price:500, on:false},
+ {name:'덴포잔 대관람차', price:900, on:false},
+];
+
+/* ═══════════ 렌더링 ═══════════ */
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+
+/* 탭 */
+$('#nav').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  $$('#nav button').forEach(x=>x.classList.toggle('on',x===b));
+  $$('section.tab').forEach(s=>s.classList.toggle('on',s.id==='tab-'+b.dataset.tab));
+  if(b.dataset.tab==='food') setTimeout(()=>{ if(window._map) window._map.invalidateSize(); },50);
+});
+
+/* 일정 */
+function fmt(n){return n.toLocaleString('ko-KR')}
+function renderDays(){
+  const host=$('#daysHost'); host.innerHTML='';
+  DAYS.forEach(d=>{
+    let sum=0;
+    const rail=d.stops.map(s=>{
+      sum+=s.costJpy||0;
+      const chips=[];
+      if(s.costJpy) chips.push(`<span class="chip cost">¥${fmt(s.costJpy)}${s.costLabel?' ('+s.costLabel+')':''}</span>`);
+      else if(s.kind==='spot'&&s.costJpy===0) chips.push(`<span class="chip free">무료</span>`);
+      if(s.dur) chips.push(`<span class="chip dur">${s.dur}</span>`);
+      return `<div class="stop ${s.kind}">
+        <div class="t">${s.t}</div>
+        <div class="track"><div class="dot"></div></div>
+        <div class="body"><div class="name">${s.name}</div>
+        ${s.desc?`<div class="desc">${s.desc}</div>`:''}
+        ${chips.length?`<div class="chips">${chips.join('')}</div>`:''}</div></div>`;
+    }).join('');
+    host.insertAdjacentHTML('beforeend',
+      `<h3>Day ${d.id.slice(1)} · ${d.date} — ${d.title}</h3>
+       <div class="rail">${rail}</div>
+       <div class="daycost">이 날 고정비(교통+입장, 2인): <b>¥${fmt(sum)}</b> ≈ ₩<span class="krwOf" data-jpy="${sum}"></span></div>`);
+  });
+}
+
+/* 예산 */
+function fx(){return parseFloat($('#fxRate').value)||9.2}
+function renderBudget(){
+  const r=fx();
+  const daily=600000, flight=699674, hotel=298197;
+  $('#dailyJpy').textContent='¥'+fmt(Math.round(daily/r));
+  const grand=flight+hotel+daily;
+  $('#grandKrw').textContent='₩'+fmt(grand);
+  $('#grandJpy').textContent='(현지경비 ¥'+fmt(Math.round(daily/r))+')';
+  // 일자별
+  const tb=$('#tblDaily tbody'); tb.innerHTML='';
+  DAYS.forEach(d=>{
+    const sum=d.stops.reduce((a,s)=>a+(s.costJpy||0),0);
+    const krw=Math.round(sum*r);
+    const items=d.stops.filter(s=>s.costJpy).map(s=>s.name.split('—')[0].split('(')[0].trim()).join(' · ');
+    tb.insertAdjacentHTML('beforeend',
+      `<tr><td>${d.date}</td><td style="font-size:12.5px;color:#6B7080">${items||'—'}</td>
+       <td class="num">¥${fmt(sum)}</td><td class="num">₩${fmt(krw)}</td>
+       <td class="num" style="color:${200000-krw>0?'var(--indigo)':'var(--vermil)'}">₩${fmt(200000-krw)}</td></tr>`);
+  });
+  $$('.krwOf').forEach(el=>{el.textContent=fmt(Math.round(parseInt(el.dataset.jpy)*r))});
+}
+$('#fxRate').addEventListener('input',()=>{renderBudget(); saveSetting('fxRate',$('#fxRate').value)});
+
+/* 패스 분석 */
+function renderPassChecks(){
+  const host=$('#passChecks'); host.innerHTML='';
+  ATTR.forEach((a,i)=>{
+    host.insertAdjacentHTML('beforeend',
+      `<div class="checkrow"><input type="checkbox" id="at${i}" ${a.on?'checked':''}>
+       <label for="at${i}">${a.name}</label><span class="p">¥${fmt(a.price)}</span></div>`);
+  });
+  host.addEventListener('change',calcPass);
+  $('#metroRides').addEventListener('input',calcPass);
+  $('#metroFare').addEventListener('input',calcPass);
+  $('#isWeekend').addEventListener('change',calcPass);
+  calcPass();
+}
+function calcPass(){
+  const rides=parseInt($('#metroRides').value)||0;
+  const fare=parseInt($('#metroFare').value)||240;
+  const eco=$('#isWeekend').checked?620:820;
+  let entry=0; ATTR.forEach((a,i)=>{ if($('#at'+i).checked) entry+=a.price; });
+  const metro=rides*fare;
+  const solo=entry+metro;              // 개별
+  const ecoTotal=eco+entry;            // 에코카드 + 개별입장
+  const amazing=3500;                  // 주유패스 (입장+교통 포함)
+  const best=Math.min(solo,ecoTotal,amazing);
+  let name,detail;
+  if(best===amazing){name='주유패스 1일권이 이득';detail=`주유패스 ¥3,500 vs 개별 ¥${fmt(solo)} — <b>¥${fmt(solo-amazing)} 절약</b>`;}
+  else if(best===ecoTotal&&ecoTotal<solo){name='엔조이 에코 카드가 이득';detail=`에코카드+입장 ¥${fmt(ecoTotal)} vs 개별 ¥${fmt(solo)} — ¥${fmt(solo-ecoTotal)} 절약 (지하철 ${rides}회 기준)`;}
+  else {name='개별 결제가 이득 — 패스 불필요';detail=`개별 합계 ¥${fmt(solo)} (입장 ¥${fmt(entry)} + 지하철 ¥${fmt(metro)}) &lt; 주유패스 ¥3,500`;}
+  const v=$('#passVerdict');
+  v.className='verdict '+(best===solo?'lose':'win');
+  v.innerHTML=`<div class="v-title">${name}</div>
+   <div style="font-size:13px;margin-top:6px">${detail}</div>
+   <table style="margin-top:10px"><tr><td>개별 결제</td><td class="num">¥${fmt(solo)}</td></tr>
+   <tr><td>엔조이 에코 카드 (¥${eco}) + 개별 입장</td><td class="num">¥${fmt(ecoTotal)}</td></tr>
+   <tr><td>주유패스 1일권 (교통·입장 포함)</td><td class="num">¥${fmt(amazing)}</td></tr></table>`;
+}
+
+/* 지도 */
+function renderMap(){
+  const map=L.map('map',{scrollWheelZoom:false}).setView([34.681,135.51],13);
+  window._map=map;
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(map);
+  const color=p=> p.cat==='dessert'?'#A8802C' : p.cat==='spot'?'#4F7EA3' : (p.tier==='must'?'#C2452D':'#2C4770');
+  const gmUrl=p=> p.gm || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.q)}`;
+  POIS.forEach(p=>{
+    const gm=gmUrl(p);
+    L.circleMarker([p.lat,p.lng],{radius:8,color:color(p),weight:2.5,fillColor:'#fff',fillOpacity:.95})
+     .addTo(map)
+     .bindPopup(`<b>${p.name}</b>${p.jjh?' <span style="background:#1B2C4A;color:#F2D28A;font-size:10px;padding:1px 5px">정준하</span>':''}<br><span style="font-size:12px">${p.note}</span><br><a href="${gm}" target="_blank" rel="noopener">구글맵 열기 ↗</a>`);
+  });
+  // 목록
+  const mk=p=>{
+    const gm=gmUrl(p);
+    const tag=p.tier==='must'?'<span class="tag must">필수</span>':p.tier==='opt'?'<span class="tag opt">선택</span>':'';
+    const jjh=p.jjh?'<span class="tag jjh">정준하</span>':'';
+    return `<div class="poi"><span class="nm">${p.name} ${tag} ${jjh}</span><span class="meta">${p.note}</span><a href="${gm}" target="_blank" rel="noopener">구글맵↗</a></div>`;
+  };
+  $('#listFood').innerHTML=POIS.filter(p=>p.cat==='food').map(mk).join('');
+  $('#listDessert').innerHTML=POIS.filter(p=>p.cat==='dessert').map(mk).join('');
+}
+
+/* ═══════════ Firebase 노트 ═══════════ */
+let db=null;
+function saveSetting(k,v){ if(db) db.ref('settings/'+k).set(v); }
+function initFirebase(){
+  if(!FIREBASE_CONFIG){ return; }
+  const s1=document.createElement('script'); s1.src='https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js';
+  const s2=document.createElement('script'); s2.src='https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js';
+  s1.onload=()=>document.head.appendChild(s2);
+  s2.onload=()=>{
+    try{
+      firebase.initializeApp(FIREBASE_CONFIG);
+      db=firebase.database();
+      const banner=$('#fbBanner'); banner.className='ok';
+      banner.innerHTML='<b>Firebase 연결됨</b> — 두 사람의 체크리스트와 환율 설정이 실시간 저장·동기화됩니다.';
+      LISTS.J.fb=db.ref('checklist/joohyun');
+      LISTS.Y.fb=db.ref('checklist/yeeun');
+      ['J','Y'].forEach(w=>{
+        LISTS[w].fb.on('value',snap=>{
+          LISTS[w].items=snap.val()||{};
+          renderList(w);
+          $('#sync'+w).textContent='동기화 '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+        });
+      });
+      db.ref('settings').on('value',snap=>{
+        const v=snap.val()||{};
+        if(v.fxRate&&document.activeElement.id!=='fxRate'){$('#fxRate').value=v.fxRate;}
+        renderBudget();
+      });
+    }catch(e){ console.error('Firebase init 실패:',e); }
+  };
+  document.head.appendChild(s1);
+}
+/* 체크리스트 — 로컬 모드에선 메모리에만, Firebase 연결 시 실시간 동기화 */
+const LISTS={ J:{items:{},fb:null}, Y:{items:{},fb:null} };
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function renderList(w){
+  const host=$('#list'+w), L=LISTS[w];
+  const keys=Object.keys(L.items).sort((a,b)=>(L.items[a].ts||0)-(L.items[b].ts||0));
+  if(!keys.length){host.innerHTML='<div class="cempty">아직 항목이 없습니다 — 아래에서 추가하세요.</div>';return;}
+  host.innerHTML=keys.map(k=>{
+    const it=L.items[k];
+    return `<div class="citem ${it.done?'done':''}" data-k="${k}">
+      <input type="checkbox" ${it.done?'checked':''} aria-label="완료">
+      <span class="txt">${esc(it.text)}</span>
+      <button class="del" aria-label="삭제" title="삭제">×</button></div>`;
+  }).join('');
+}
+function addItem(w){
+  const inp=$('#in'+w), text=inp.value.trim();
+  if(!text) return;
+  const L=LISTS[w], item={text, done:false, ts:Date.now()};
+  if(L.fb){ L.fb.push(item); }
+  else { L.items['k'+Date.now()+Math.random().toString(36).slice(2,6)]=item; renderList(w); }
+  inp.value=''; inp.focus();
+}
+function bindListEvents(w){
+  $('#list'+w).addEventListener('click',e=>{
+    const row=e.target.closest('.citem'); if(!row) return;
+    const k=row.dataset.k, L=LISTS[w];
+    if(e.target.classList.contains('del')){
+      if(L.fb) L.fb.child(k).remove();
+      else { delete L.items[k]; renderList(w); }
+    } else if(e.target.type==='checkbox'){
+      const done=e.target.checked;
+      if(L.fb) L.fb.child(k).update({done});
+      else { L.items[k].done=done; renderList(w); }
+    }
+  });
+  $('#in'+w).addEventListener('keydown',e=>{ if(e.key==='Enter') addItem(w); });
+}
+$$('.addbtn').forEach(b=>b.addEventListener('click',()=>addItem(b.dataset.who)));
+bindListEvents('J'); bindListEvents('Y'); renderList('J'); renderList('Y');
+
+/* ── 시작 ── */
+renderDays(); renderBudget(); renderPassChecks(); renderMap(); initFirebase();
+</script>
+</body>
+</html>
