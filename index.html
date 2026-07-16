@@ -73,8 +73,12 @@ tr.total td.num{font-size:13.5px}
 .chips{margin-top:5px;display:flex;gap:6px;flex-wrap:wrap}
 .chip{font-family:var(--mono);font-size:11px;padding:1.5px 7px;border:1px solid var(--line);color:#4A4F62;background:#fff}
 .chip.cost{border-color:var(--gold);color:var(--gold)}
+.chip.meal{border-color:#7A5C3E;color:#7A5C3E}
+.chip.book{border-color:var(--vermil);color:var(--vermil);font-weight:500}
 .chip.dur{border-color:var(--mizu);color:var(--mizu)}
 .chip.free{border-color:#9AA;color:#789}
+.gmapbtn{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--indigo-deep);border:1px solid var(--indigo-deep);background:#fff;padding:6px 12px;text-decoration:none;margin-bottom:6px}
+.gmapbtn:hover{background:var(--indigo-deep);color:#fff}
 .daycost{font-family:var(--mono);font-size:12.5px;border:1px solid var(--indigo);background:#fff;padding:10px 14px;margin-top:6px}
 .daycost b{color:var(--indigo-deep)}
 
@@ -166,10 +170,9 @@ li{margin:4px 0}
 <nav id="nav">
   <button data-tab="budget" class="on">예산 한눈에</button>
   <button data-tab="days">일자별 동선</button>
-  <button data-tab="food">맛집 지도</button>
+  <button data-tab="food">지도</button>
   <button data-tab="pass">패스 손익 분석</button>
   <button data-tab="notes">우리 노트</button>
-  <button data-tab="plan" class="temp">추천 일정</button>
 </nav>
 
 <!-- ══════════ 예산 ══════════ -->
@@ -190,7 +193,17 @@ li{margin:4px 0}
       <tr><td>숙소 2박 — 도미인 오사카 타니마치 (더블, 아고다 결제)</td><td>확정</td>
         <td class="num">—</td>
         <td class="num">298,197</td></tr>
-      <tr><td>일일 경비 (10만원 × 2인 × 3일)<br><span class="note-est">입장료 + 시내교통 + 식비 + 잡비 포함</span></td><td>계획</td>
+      <tr><td>주유패스 2일권 (2인, 사전 구매)<br><span class="note-est">7/31–8/1 연속 이틀 · 메트로 무제한 + 시설 무료</span></td><td>확정</td>
+        <td class="num">—</td><td class="num">91,800</td></tr>
+      <tr><td>라피트 특급 편도 (2인, 공항→난바)<br><span class="note-est">7/31 · 사전 구매 · 귀국은 난카이 급행 970¥/인 실비</span></td><td>확정</td>
+        <td class="num">—</td><td class="num">26,400</td></tr>
+      <tr><td>e-SIM (2인)<br><span class="note-est">3일 데이터 · 확정 시 금액 수정</span></td><td>예상 <sup class="est">예상</sup></td>
+        <td class="num">—</td>
+        <td class="num"><input type="number" id="esimKrw" value="20000" step="1000" style="width:90px;text-align:right"></td></tr>
+      <tr><td>여행자 보험 (2인)<br><span class="note-est">카드사 무료 보험 있으면 0원 가능</span></td><td>예상 <sup class="est">예상</sup></td>
+        <td class="num">—</td>
+        <td class="num"><input type="number" id="insKrw" value="20000" step="1000" style="width:90px;text-align:right"></td></tr>
+      <tr><td>일일 경비 (10만원 × 2인 × 3일)<br><span class="note-est">입장료 + 시내교통 + 식비 + 잡비 · 아래 표 참고 · ※주유패스·라피트는 위에서 별도 계상</span></td><td>계획</td>
         <td class="num" id="dailyJpy">—</td><td class="num">600,000</td></tr>
       <tr class="total"><td colspan="2">총 예산</td><td class="num" id="grandJpy">—</td><td class="num" id="grandKrw">—</td></tr>
     </tbody>
@@ -199,7 +212,7 @@ li{margin:4px 0}
   <h3>일일 경비 배분 (일자별 고정비 → 자유비)</h3>
   <p class="lead">일정표의 교통·입장료를 자동 합산해, 하루 20만원(2인) 중 <b>식비·자유 지출로 남는 금액</b>을 계산합니다.</p>
   <table id="tblDaily">
-    <thead><tr><th>일자</th><th>고정비 내역</th><th class="num">고정 ¥</th><th class="num">고정 ₩</th><th class="num">잔여(자유) ₩</th></tr></thead>
+    <thead><tr><th>일자</th><th class="num">교통·입장</th><th class="num">식사·간식 ¥</th><th class="num">합계 ₩</th><th class="num">일일예산 대비</th></tr></thead>
     <tbody></tbody>
   </table>
   <p class="note-est">※ <sup class="est">예상</sup> 표시는 아직 확정되지 않은 추정치입니다. 요금은 2026.7 조사 기준이며 현지 변동 가능.</p>
@@ -208,8 +221,38 @@ li{margin:4px 0}
 <!-- ══════════ 일자별 동선 ══════════ -->
 <section class="tab" id="tab-days">
   <h2>일자별 동선 · 소요 · 비용</h2>
+
   <p class="lead">파란 원 = 관광 · 붉은 원 = 식사 · 물빛 원 = 더위 피난처(쉼) · 금색 원 = 쇼핑 · 작은 점 = 이동. 비용 칩은 <b>2인 합계</b> 기준입니다.</p>
   <div id="daysHost"></div>
+  <div class="box warn">
+    <b>동선을 다시 짠 결정적 이유 — 라멘바 영업시간</b><br>
+    「세계에서 제일 한가한 라멘바」는 <b>일요일 정기휴무</b>이고, <b>토요일은 점심(11:00–14:30)만</b> 영업합니다.
+    즉 <b>8/1(토) 점심이 유일하게 갈 수 있는 시간</b>이라, 이 한 칸을 축으로 나머지를 다시 배치했습니다.
+    낮에 가고 싶다고 하신 것과도 정확히 맞아떨어집니다.
+  </div>
+
+  <div class="box warn">
+    <b>사전 예약이 필요한 곳 — 지금 해두세요</b>
+    <table style="margin-top:8px">
+      <thead><tr><th>대상</th><th>예약처</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td><b>주유패스 2일권</b></td><td>✅ 구매 완료 (1인 45,900원)</td><td>7/31 난바 도착 후 개시 · 2일권은 메트로만·사철 불가</td></tr>
+        <tr><td><b>라피트 특급</b> (D1 공항→난바)</td><td>✅ 사전 구매 (1인 13,200원)</td><td>지정석 · 출발 5분 전까지 좌석 지정 필요</td></tr>
+        <tr><td><b>원더 크루즈</b> (D2 20:00)</td><td>✅ 20:00 예약 완료</td><td>주유패스로 무료 탑승 · 니혼바시 선착장 · 필요시 시간 변경 가능</td></tr>
+        <tr><td><b>타즈야 난바</b> (D3 점심)</td><td>✅ 11:00 예약 완료</td><td>2,490¥ 점심 세트 · 난바</td></tr>
+        <tr><td>토리키조쿠 (D1 저녁)</td><td>넷 예약 가능(권장)</td><td>숙소 도보권 · 금요일 저녁이라 예약해두면 안심</td></tr>
+        <tr><td>아지노야 (D2 저녁)</td><td>예약 불가 (현장 웨이팅)</td><td>웨이팅 30~60분 — 크루즈 전 든든히</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box info">
+    <b>주신 순서 그대로 배치 </b><br>
+    <b>관광</b> — 오사카성·고자부네 <span class="chip">D1 오후</span> · 헵파이브 관람차+쇼핑몰 <span class="chip">D2 오전</span> · 우메다 공중정원 <span class="chip">D2 낮</span> · 원더크루즈 <span class="chip">D2 20:00</span> · 돈키호테 <span class="chip">D3 오전</span><br>
+    <b>맛집</b> — 부타만 <span class="chip">D1 공항</span> · 토리키조쿠 야키토리 <span class="chip">D1 저녁</span> · 도미인 요나키소바 <span class="chip">D1 밤</span> · 라멘바 <span class="chip">D2 점심</span> · 오코노미야키+볶음우동 <span class="chip">D2 저녁</span> · 타즈야 난바 <span class="chip">D3 점심</span><br>
+    <span class="note-est">2일차 오후(15:40~18:00)는 대욕장 낮 휴식으로 채웠습니다 — 한여름 가장 더운 시간대 회피. 냉방 쇼핑(난바파크스)을 원하시면 바꿔드립니다.</span>
+  </div>
+
   <div class="hotel">
     <div class="rank">숙소 확정 · 예약번호 1747245467</div>
     <h4>도미인 오사카 타니마치 (천연온천) — 7/31–8/2 · 2박 · 더블 금연 · ₩298,197</h4>
@@ -232,13 +275,13 @@ li{margin:4px 0}
 
 <!-- ══════════ 맛집 지도 ══════════ -->
 <section class="tab" id="tab-food">
-  <h2>맛집 지도 <span class="tag must">필수</span> <span class="tag opt">선택</span> <span class="tag jjh">정준하</span></h2>
+  <h2>지도 <span class="tag must">필수</span> <span class="tag opt">선택</span> <span class="tag jjh">정준하</span></h2>
   <p class="lead">구글 내 지도(한국어) 연동. 핀을 누르면 태그·대표 메뉴가 뜨고, 스마트폰 구글맵 앱 → 저장됨 → 지도에서 같은 지도를 열어 바로 길찾기할 수 있습니다.</p>
 
   <div class="box info">
     <b>정준하 유튜브 맛집 전체 반영 완료</b> — 1탄 4곳(세계에서 제일 한가한 라멘바 · 와라야키야 기타신치 · 만료 히고바시 · 히로시다이 제트) + 2탄 2곳(원조 믹스주스 · 우메키타 플로어).
     모두 기타·나카노시마·후쿠시마 권역이라 <b>Day2 저녁 동선</b>과 정확히 겹칩니다. 만료는 예약 필수(1–2주 전)이니 지금이 예약 골든타임입니다.<br>
-    추천받은 곳 3곳(겐베에·아모야·하루코마)도 반영 완료 — 겐베에는 Day1 저녁으로 확정 배치. JTBC 퇴근 후 한 끼 영상(마츠다×정준하) 속 가게들은 방송에서 상호가 명시되지 않아 특정하지 못했습니다. 텐마의 노포 타코야키집 등인데, 하루코마와 같은 텐마 권역이니 가게명을 아시면 알려주세요.
+    추천받은 곳(아모야·하루코마)도 반영 완료. JTBC 퇴근 후 한 끼 영상 속 가게들은 방송에서 상호가 명시되지 않아 특정하지 못했습니다 — 가게명을 아시면 알려주세요.
   </div>
 
   <div id="map"></div>
@@ -281,13 +324,16 @@ li{margin:4px 0}
   <div id="passChecks"></div>
   <div class="verdict" id="passVerdict"></div>
   <div class="box gold">
-    <b>구매 전략 (질문에 대한 답)</b> — 주유패스는 <b>1일권을 Day2(8/1) 하루만, 1인 1장씩 총 2장</b> 사면 됩니다.
-    체크하신 4개 시설(천수각·뱃놀이·공중정원·대관람차)이 전부 Day2 하루에 소화 가능한 동선이라 일정도 그렇게 재편성해 뒀습니다.
-    나머지 이틀은 패스가 필요 없습니다: <b>Day1</b>은 지하철 2회(약 480¥/인)뿐이라 개별 승차가 최선이고(에코카드 620¥도 손해),
-    <b>Day3</b>은 숙소 무료 셔틀로 난바까지 가면 시내 교통비 0엔 — 공항 가는 난카이 전철은 애초에 주유패스 적용 대상이 아닙니다.
-    2일권(5,000¥)은 1일권+Day1 교통비(3,500+480=3,980¥)보다 비싸서 탈락입니다.
+    <b>구매 확정 — 주유패스 2일권 (1인 45,900원 × 2 = 91,800원), 7/31–8/1 연속 사용</b><br>
+    2일권으로 커버되는 시설 정가 합계:
+    <b>Day1</b> 천수각 1,200 + 고자부네 1,500 = 2,700¥,
+    <b>Day2</b> 공중정원 1,500 + 헵파이브 관람차 800 + 원더크루즈 1,500 = 3,800¥.
+    시설만 <b>2인 합계 13,000¥(약 12만원)</b>이고 여기에 이틀간 지하철 무제한이 더해집니다. 패스값 대비 확실히 이득.<br>
+    <b>중요 제약 2가지</b> — ① 2일권은 <b>오사카 메트로만</b> 됩니다(1일권과 달리 한큐·난카이 등 사철 불가). 다행히 이 일정의 시내 이동은 전부 메트로라 문제없습니다. ② 공항 라피트(난카이)는 <b>패스 대상이 아니라 별도권</b>이라 사전 구매하신 게 맞습니다. ③ 귀국(8/2) 난바→공항은 패스가 없으니 난카이 급행 <b>970¥/인</b>을 현장 결제하시면 됩니다 (맞습니다).<br>
+    <b>패스 개시 타이밍</b>: 2일권은 개시일 막차까지가 1일. 7/31은 오후 늦게 도착이라 패스를 <b>공항이 아닌 난바 도착 후(숙소 체크인 즈음) 개시</b>하면 그날 오사카성·고자부네·저녁 지하철까지 알뜰하게 씁니다.
   </div>
-  <p class="note-est" style="margin-top:10px">유의: 우메다 공중정원은 주유패스 무료입장이 15시 이전 한정이며, 7·8월 성수기에는 무료 대신 할인만 적용될 수 있다는 안내가 있습니다. 당일 입장 전 창구에서 확인하고, 만약 할인만 된다면 대신 츠텐카쿠·역사박물관 등으로 교체해도 패스 본전(3,500¥)은 이미 천수각+뱃놀이+대관람차+지하철로 충분합니다(약 4,600¥ 상당).</p>
+  <p class="note-est" style="margin-top:10px">아래 계산기는 참고용입니다. 이미 2일권을 확정하셨으니, 시설을 체크해 "정가 합계가 패스값을 넘는지"만 확인하는 용도로 보세요.</p>
+  <p class="note-est" style="margin-top:10px">유의 1: 원더크루즈는 주유패스로 무료지만 <b>예약자 우선 탑승</b>이라 사전 예약이 사실상 필수입니다. 유의 2: 우메다 공중정원은 주유패스 무료입장이 15시 이전 한정이며 7·8월 성수기엔 할인만 적용될 수 있습니다. 설령 그렇더라도 나머지 4곳만으로 5,400엔이라 본전은 이미 넘습니다.</p>
 </section>
 
 <!-- ══════════ 노트 ══════════ -->
@@ -315,43 +361,6 @@ li{margin:4px 0}
       </div>
     </div>
   </div>
-</section>
-
-<!-- ══════════ 추천 일정 (임시) ══════════ -->
-<section class="tab" id="tab-plan">
-  <h2>추천 일정 · 더위 전략 <span class="tag pend">확정 후 삭제</span></h2>
-  <p class="lead">7월말–8월초 오사카는 최고 35–38℃, 체감 40℃+. 원칙은 하나입니다 — <b>야외는 오전 9–11시와 해질녘, 정오–16시는 실내</b>.</p>
-
-  <h3>더위 피난처 목록 (동선 위에 배치)</h3>
-  <table>
-    <thead><tr><th>피난처</th><th>위치</th><th>비고</th></tr></thead>
-    <tbody>
-      <tr><td>오사카 역사박물관</td><td>다니마치욘초메역 직결급</td><td>냉방 + 10층에서 천수각 조망 · 600¥ · 오사카성과 세트 동선</td></tr>
-      <tr><td>숙소 대욕장 낮 휴식</td><td>숙소</td><td>13–16시 복귀 → 목욕·낮잠 → 17시 재출발. 한여름 여행의 정석</td></tr>
-      <tr><td>준킷사 아메리칸 (순끽다점)</td><td>도톤보리 옆</td><td>1946년 개업 레트로 킷사텐 · 크림소다 · 고풍스러운 실내</td></tr>
-      <tr><td>난난타운 지하상가</td><td>난바역 직결</td><td>지하로 이동 자체가 피서 · 돈키호테 인근</td></tr>
-      <tr><td>나카노시마 중앙공회당 주변</td><td>요도야바시</td><td>해질녘 산책용 — 강바람 + 다이쇼 시대 건축</td></tr>
-    </tbody>
-  </table>
-
-  <h3>Day 2 대안 비교 (고적 취향 · 인파 회피 기준)</h3>
-  <table>
-    <thead><tr><th>안</th><th>내용</th><th>장점</th><th>유의</th></tr></thead>
-    <tbody>
-      <tr><td><b>A안 (기본)</b><br>오사카성 집중</td><td>오전 오사카성(로드트레인+천수각) → 역사박물관 → 낮 휴식 → 해질녘 나카노시마</td><td>이동 최소 · 냉방 확보 · 숙소 복귀 쉬움</td><td>천수각 내부는 주말 오전도 관광객 있음 (9시 개장 직후 입장 권장)</td></tr>
-      <tr><td><b>B안 (외곽)</b><br>나라 반나절</td><td>오전 긴테츠난바→긴테츠나라(급행 약 40분, 편도 약 680¥<sup class="est">예상</sup>) · 도다이지 대불전·나라공원 → 오후 오사카 복귀 후 휴식</td><td>고찰·대불 — 취향 적중 · 교토보다 한산</td><td>공원이 전부 야외 + 사슴. 폭염일엔 체력 소모 큼. 8시대 출발 필수</td></tr>
-      <tr><td><b>C안 (근교 고적)</b><br>시텐노지 + 스미요시타이샤</td><td>오전 시텐노지(593년 창건, 관광객 적음) → 점심 → 스미요시타이샤(스미요시 대교) → 휴식</td><td>오사카 시내 최고(最古) 사찰·신사 · 한산함 1등</td><td>두 곳 다 야외 비중 높음 — 오전에 몰아서</td></tr>
-    </tbody>
-  </table>
-  <div class="box gold">추천: <b>A안을 기본</b>으로 하고, 당일 아침 기온·컨디션이 좋으면 C안의 시텐노지를 Day1 저녁 이전 또는 Day2 오전에 끼워 넣는 방식. B안(나라)은 이번 폭염 시기엔 차선입니다.</div>
-
-  <h3>준비물 (폭염 특화)</h3>
-  <ul>
-    <li>휴대 선풍기 + 냉감 타월 (현지 조달 가능 — 돈키호테·다이소)</li>
-    <li>이온음료 파우더 (포카리 분말) — 편의점 생수에 타서</li>
-    <li>양산 겸용 우산 — 일본은 남성도 양산 일반적, 체감 -3℃</li>
-    <li>염분 사탕 (塩タブレット) — 편의점 어디나</li>
-  </ul>
 </section>
 
 </div><!-- /wrap -->
@@ -399,48 +408,47 @@ const FIREBASE_CONFIG = {
 
 /* ── 일정 데이터 ──  costJpy = 2인 합계, est = 추정치 */
 const DAYS = [
- { id:'d1', date:'7/31 (금)', title:'입성 — 도착과 저녁 산책',
+ { id:'d1', date:'7/31 (금)', title:'입성 — 오사카성 · 뱃놀이 · 토리키조쿠 (주유패스 1일차)',
    stops:[
     {t:'10:50', kind:'move', name:'인천공항 출발 (TW303)', desc:'탑승 3시간 전 도착 권장 · 위탁 15kg/인'},
     {t:'13:00', kind:'move', name:'간사이공항 도착 → 입국·수하물', desc:'약 60분 예상', dur:'60분'},
-    {t:'14:05', kind:'food', name:'551 호라이 간사이공항점 — 도착 기념 부타만', desc:'T1 내 매장 (층 안내도 확인) · 갓 쪄낸 부타만으로 오사카 신고식 · 주의: 돼지고기라 한국 반입 불가 — 귀국 때 선물용 구매는 안 됨, 현장에서만', costJpy:420, costLabel:'부타만 210¥×2', dur:'20분'},
-    {t:'14:35', kind:'move', name:'난카이 공항급행 → 난바', desc:'약 45–50분 · 라피트 특급(1,490¥/인)은 15분 단축', costJpy:1940, costLabel:'970¥×2', dur:'50분'},
-    {t:'15:50', kind:'rest', name:'도미인 오사카 타니마치 체크인', desc:'난바→다니마치욘초메 (센니치마에선→다니마치선, 약 15분) · 가장 더운 시간대, 서두르지 않기', costJpy:480, costLabel:'지하철 240¥×2', dur:'15분'},
-    {t:'17:00', kind:'spot', name:'카라호리 상점가 산책', desc:'아케이드 그늘 아래 로컬 상점가 · 관광객 적음 · 숙소(다니마치 기준) 도보권', costJpy:0, dur:'45분'},
-    {t:'17:45', kind:'move', name:'다니마치욘초메 → 난바 (지하철)', desc:'센니치마에선 직통 약 10분', costJpy:480, costLabel:'240¥×2', dur:'10분'},
-    {t:'18:00', kind:'food', name:'저녁 — 겐베에 난바점 (덩어리 스테이크)', desc:'400g 안팎 덩어리 고기를 골라 4단계 화입으로 구워주는 집 · 10g 단위 주문 · 오픈~19시 하이볼 99¥ 해피아워', dur:'90분'},
-    {t:'19:40', kind:'food', name:'(선택) 551 호라이 본점 — 야식 포장', desc:'겐베에에서 도보 3분 · 공항에서 이미 먹었으니 대욕장 후 야식이 당길 것 같을 때만 (개당 210¥) · 줄은 길어 보여도 빨리 빠짐', dur:'15분'},
-    {t:'20:00', kind:'spot', name:'호젠지요코초 → 도톤보리 야경 (짧게)', desc:'돌바닥 골목 호젠지는 조용, 도톤보리는 인파 — 글리코상만 찍고 탈출', costJpy:0, dur:'50분'},
-    {t:'21:00', kind:'move', name:'난바 → 숙소 복귀 (지하철)', desc:'', costJpy:480, costLabel:'240¥×2', dur:'15분'},
-    {t:'21:20', kind:'rest', name:'숙소 대욕장', desc:'21:30 무료 요나키소바와 함께 하루 마무리'},
+    {t:'14:05', kind:'food', name:'551 호라이 간사이공항점 — 부타만', desc:'갓 쪄낸 부타만으로 오사카 신고식 · 돼지고기라 한국 반입 불가(현장 취식만)', meal:420, mealLabel:'210¥×2', dur:'20분'},
+    {t:'14:35', kind:'move', name:'라피트 특급 → 난바 (사전 구매)', desc:'난카이 라피트 · 약 38분 · 전 좌석 지정 · 1인 13,200원 · ※주유패스 대상 아님(별도권)', costKrw:26400, costLabel:'13,200원×2', dur:'38분', book:'라피트 티켓 사전 구매 완료'},
+    {t:'15:20', kind:'rest', name:'도미인 오사카 타니마치 체크인 · 짐만 내리고 출발', desc:'난바→다니마치욘초메 약 15분 · 여기서 주유패스 2일권 개시(1일차)', costJpy:0, costLabel:'주유패스', dur:'15분', book:'주유패스 여기서 개시'},
+    {t:'16:00', kind:'move', name:'숙소 → 오사카성 (도보)', desc:'오테몬까지 도보 10~15분 · 늦은 오후라 더위 한풀 꺾임'},
+    {t:'16:20', kind:'spot', name:'로드트레인 → 호코쿠신사 앞', desc:'도보 20분 구간을 5분에 (패스 미적용 · 별도 400¥)', costJpy:800, costLabel:'400¥×2', dur:'5분'},
+    {t:'16:35', kind:'spot', name:'오사카성 천수각', desc:'주유패스 무료(정가 1,200¥) · 최종 입장 16:30~17:00 — 도착 즉시 입장 · 석양 전망대', costJpy:0, dur:'55분'},
+    {t:'17:35', kind:'spot', name:'고자부네 뱃놀이 (해자 유람)', desc:'주유패스 무료(정가 1,500¥) · 운항 마감 17:00 전후이니 성보다 뱃놀이를 먼저 탈지 현장에서 판단', costJpy:0, dur:'25분'},
+    {t:'18:20', kind:'move', name:'오사카성 → 다니마치욘초메 (지하철)', desc:'다니마치선 약 10분 · 주유패스 · 숙소 옆 저녁집으로', costJpy:0, costLabel:'주유패스', dur:'10분'},
+    {t:'18:40', kind:'food', name:'저녁 — 토리키조쿠 타니마치욘초메점 (야키토리)', desc:'숙소 도보권 · 전 메뉴 균일가 야키토리 체인 · 모모쿠시·츠쿠네·메가 하이볼 · 태블릿 주문이라 편함', meal:5000, mealLabel:'2인 4,000–5,000¥', dur:'80분'},
+    {t:'20:10', kind:'shop', name:'근처 마트 마감세일 · 편의점 털기', desc:'라이프/코쿠민 등 20시 이후 반찬·초밥 마감 할인 · 숙소 야식·다음날 조식거리 · 편의점 디저트', meal:2000, mealLabel:'약 1,000¥×2', dur:'30분'},
+    {t:'20:50', kind:'rest', name:'숙소 복귀 → 21:30 요나키소바 → 온천', desc:'도미인 명물 무료 간장 라멘(21:30) · 대욕장은 익일 09:00까지 · 첫날 마무리', costJpy:0, costLabel:'주유패스'},
    ]},
- { id:'d2', date:'8/1 (토)', title:'주유패스의 날 — 성 · 뱃놀이 · 공중정원 · 대관람차',
+ { id:'d2', date:'8/1 (토)', title:'우메다 — 헵파이브 · 공중정원 · 라멘 · 원더크루즈 (주유패스 2일차)',
    stops:[
     {t:'08:20', kind:'food', name:'조식 (숙소)', desc:'약 60가지 메뉴 뷔페 · 명물 하리하리우동·규스지카레'},
-    {t:'08:50', kind:'move', name:'주유패스 1일권 개시 (모바일)', desc:'오늘 지하철·아래 4개 시설 전부 이 패스로', costJpy:7000, costLabel:'3,500¥×2'},
-    {t:'09:00', kind:'move', name:'오사카성 공원 진입 — 숙소에서 도보', desc:'오테몬(정문)까지 도보 10분 안팎'},
-    {t:'09:30', kind:'spot', name:'로드트레인 → 호코쿠신사 앞', desc:'첫차 09:30 · 도보 20분 구간을 5분에 (패스 미적용)', costJpy:800, costLabel:'400¥×2', dur:'5분'},
-    {t:'09:45', kind:'spot', name:'오사카성 천수각', desc:'주유패스 무료 (정가 1,200¥) · 오전이 인파·더위 모두 최소', costJpy:0, dur:'90분'},
-    {t:'11:20', kind:'spot', name:'고자부네 뱃놀이 (해자 유람)', desc:'주유패스 무료 (정가 1,500¥) · 당일 선착순 — 내려오는 길에 바로 매표', costJpy:0, dur:'40분'},
-    {t:'12:15', kind:'food', name:'점심 — 요시토라 (장어 노포)', desc:'오사카성 인근 100년 장어집 · 2인 5,000–8,000¥', dur:'70분'},
-    {t:'13:40', kind:'move', name:'다니마치욘초메 → 히가시우메다', desc:'다니마치선 직통 15분 · 주유패스', dur:'15분'},
-    {t:'13:55', kind:'food', name:'원조 믹스주스 한 잔 (정준하 2탄)', desc:'한신 우메다 지하 · 공중정원 가는 길목 · 1잔 300¥ 안팎 — 한여름 당 충전', costJpy:600, costLabel:'300¥×2', dur:'10분'},
-    {t:'14:10', kind:'rest', name:'우메다 스카이빌딩 공중정원', desc:'주유패스 무료는 15시 이전 입장 한정 (정가 1,500¥) — 7·8월 성수기엔 할인만 적용될 수 있으니 입장 전 확인 · 실내 전망층 냉방', costJpy:0, dur:'70분'},
-    {t:'15:40', kind:'move', name:'우메다 → 오사카코 (덴포잔)', desc:'미도스지선→혼마치 환승→주오선 약 30분 · 주유패스', dur:'30분'},
-    {t:'16:15', kind:'rest', name:'덴포잔 대관람차', desc:'주유패스 무료 (정가 900¥) · 냉방 곤돌라 15분 — 바다 전망 피서 · 하버 카페 휴식 병행', costJpy:0, dur:'70분'},
-    {t:'17:40', kind:'move', name:'오사카코 → 요도야바시 (나카노시마)', desc:'주오선→혼마치→미도스지선 약 25분 · 주유패스', dur:'25분'},
-    {t:'18:15', kind:'spot', name:'나카노시마 — 중앙공회당·강변', desc:'다이쇼 건축 + 해질녘 강바람 · 사진 명소', costJpy:0, dur:'40분'},
-    {t:'19:00', kind:'food', name:'저녁 — 세계에서 제일 한가한 라멘바 (정준하 1탄)', desc:'나카노시마 산책에서 도보 직결 · 이름처럼 한산한 2층 라멘바', dur:'70분'},
-    {t:'20:20', kind:'food', name:'(선택) 와라야키야 기타신치 — 짚불 타타키 한잔', desc:'라멘바에서 도보 10분 · 정준하 1탄 · 체력 남을 때만', dur:'60분'},
-    {t:'21:30', kind:'move', name:'숙소 복귀 — 주유패스 마지막 승차', desc:'요도야바시/기타신치 → 다니마치욘초메 · 복귀 후 대욕장(15시~익일 9시)'},
+    {t:'09:30', kind:'move', name:'숙소 → 우메다 (지하철)', desc:'다니마치욘초메→히가시우메다 약 15분 · 주유패스', costJpy:0, costLabel:'주유패스', dur:'15분'},
+    {t:'10:00', kind:'rest', name:'헵파이브 대관람차', desc:'주유패스 무료(정가 800¥) · 106m · 15분 · 오전이라 대기 짧음 · 빨간 관람차', costJpy:0, dur:'40분'},
+    {t:'10:50', kind:'shop', name:'헵파이브 쇼핑몰 구경', desc:'약 170개 매장 · 스투시·가챠샵·잡화 · 냉방 실내 · 기념품·옷 구경', dur:'80분'},
+    {t:'12:20', kind:'rest', name:'우메다 스카이빌딩 공중정원', desc:'주유패스 무료는 15시 이전 입장 한정(정가 1,500¥) · 헵파이브에서 도보 10분 · 옥상 전망 + 실내 냉방', costJpy:0, dur:'70분'},
+    {t:'13:40', kind:'food', name:'점심 — 세계에서 제일 한가한 라멘바 ★낮에만 가능', desc:'토요일 점심(11:00–14:30)만 영업·일요일 휴무 — 이 날만 가능 · 우메다→나카노시마 지하철 1구간(패스) · 다이빌 2F', meal:2400, mealLabel:'2인 약 2,400¥', dur:'70분', book:'현장 웨이팅(예약 없음)'},
+    {t:'15:10', kind:'move', name:'나카노시마 → 난바 (지하철)', desc:'미도스지선 방면 약 15분 · 주유패스', costJpy:0, costLabel:'주유패스', dur:'15분'},
+    {t:'15:40', kind:'rest', name:'난바 — 숙소 복귀 후 대욕장 낮 휴식 (제안)', desc:'애매하다 하신 오후 시간 · 가장 더운 시간대(15~17시)를 대욕장·낮잠으로 보내고 저녁에 재출발 — 한여름 여행의 정석 · 또는 난바파크스/난난타운 지하상가 냉방 쇼핑으로 대체 가능', costJpy:0, costLabel:'주유패스', dur:'120분'},
+    {t:'18:00', kind:'food', name:'저녁 — 아지노야 (오코노미야키 + 볶음우동)', desc:'난바역 도보 1분 · 50년 노포 · 둘 다 시켜 나눠 먹기(1인 1메뉴 필수) · 크루즈 전 든든히 · 웨이팅 시 이름 먼저 등록', meal:5000, mealLabel:'2인 4,000–6,000¥', dur:'90분'},
+    {t:'19:45', kind:'move', name:'아지노야 → 니혼바시 선착장 (도보)', desc:'도톤보리 니혼바시 선착장까지 도보 8분', dur:'12분'},
+    {t:'20:00', kind:'spot', name:'원더 크루즈 (도톤보리 리버크루즈) ★20:00 예약완료', desc:'주유패스 무료 · 네온 야경이 가장 화려한 시간 · 니혼바시 선착장', costJpy:0, dur:'50분', book:'20:00 예약 완료'},
+    {t:'21:00', kind:'shop', name:'편의점 · 돈키호테 야간 (선택)', desc:'하선 후 도톤보리 편의점 야식/기념품 · 난바센니치마에점이 도보권이라 밤에 미리 둘러보면 3일차 시간 절약', meal:2000, mealLabel:'약 1,000¥×2', dur:'40분'},
+    {t:'21:50', kind:'move', name:'난바 → 숙소 복귀 (주유패스 마지막)', desc:'센니치마에→다니마치선 약 15분 · 2일권 막차까지 유효 · 복귀 후 대욕장', costJpy:0, costLabel:'주유패스'},
    ]},
- { id:'d3', date:'8/2 (일)', title:'돈키호테 — 쇼핑 후 귀국',
+ { id:'d3', date:'8/2 (일)', title:'돈키호테 쇼핑 · 타즈야 점심 — 그리고 귀국',
    stops:[
-    {t:'08:30', kind:'food', name:'조식 · 체크아웃 준비', desc:'짐은 프런트 보관 또는 캐리어 지참'},
-    {t:'09:00', kind:'move', name:'숙소 무료 셔틀버스 → 난바 방면', desc:'08:00–12:00 · 30분 간격 · 선착순 9인 (신사이바시·난카이난바 정차) — 놓치면 지하철 240¥×2', dur:'20분'},
-    {t:'09:30', kind:'shop', name:'돈키호테 도톤보리점 (24시간)', desc:'오전이 계산 줄 최소 · 면세 카운터 여권 지참 · 위탁 15kg 한도 유의!', dur:'80분'},
-    {t:'11:00', kind:'move', name:'난바역 → 난카이 공항급행', desc:'11:00~11:10 출발편 탑승 목표', costJpy:1940, costLabel:'970¥×2', dur:'50분'},
-    {t:'12:00', kind:'move', name:'간사이공항 도착 · 체크인/출국', desc:'출발 2.5시간 전 — 여유 충분', dur:'150분'},
+    {t:'08:00', kind:'food', name:'조식 · 체크아웃 준비', desc:'오늘은 주유패스 없음 — 시내 교통은 실비'},
+    {t:'09:00', kind:'move', name:'숙소 무료 셔틀버스 → 난바 방면', desc:'08:00–12:00 · 30분 간격 · 선착순 9인 · 놓치면 지하철 240¥×2', dur:'20분'},
+    {t:'09:30', kind:'move', name:'난바역 코인로커에 짐 보관', desc:'대형 캐리어 800¥×2 · 난바역/난바워크 코인로커 · 점심·쇼핑 동안 손 가볍게', costJpy:1600, costLabel:'800¥×2'},
+    {t:'09:45', kind:'shop', name:'돈키호테 난바센니치마에점 (24시간)', desc:'센니치마에 도구야스지 인근 · 오전이 계산 줄 최소 · 면세 여권 지참 · 위탁 15kg 한도 · 쇼핑비는 일일예산과 별도', dur:'75분'},
+    {t:'11:00', kind:'food', name:'점심 — 타즈야 난바 (2,490¥ 점심 세트) ★11:00 예약', desc:'난바 · 11:00 예약 완료 · 2,490¥ 점심 메뉴 주문 예정 · 위치·상호는 예약 확인서 기준', meal:4980, mealLabel:'2,490¥×2', dur:'60분', book:'11:00 예약 완료'},
+    {t:'12:10', kind:'move', name:'코인로커에서 짐 회수 → 난카이 공항급행', desc:'난바역 지하 직결 · 공항급행 970¥/인(주유패스 대상 아님) · 약 45분', costJpy:1940, costLabel:'970¥×2', dur:'45분'},
+    {t:'13:00', kind:'move', name:'간사이공항 도착 · 체크인/출국', desc:'출발 90분 전 — 여유 있음 · 온라인 체크인 권장', dur:'90분'},
     {t:'14:30', kind:'move', name:'KIX 출발 (TW304) → 16:30 인천 도착', desc:''},
    ]},
 ];
@@ -448,15 +456,19 @@ const DAYS = [
 /* ── 맛집·POI 데이터 ── */
 const POIS = [
  // 식사
- {cat:'food', tier:'must', name:'세계에서 제일 한가한 라멘바 (世界一暇なラーメン屋)', lat:34.6925, lng:135.4900, note:'나카노시마 2층 라멘바 · 이름부터 취향 저격(한산함) · Day2 저녁 — 나카노시마 산책에서 도보 직결', menu:'라멘 + 술 페어링이 콘셉트인 바 형태 — 간판 메뉴는 시즌마다 바뀌니 현장 추천을 따르는 것이 정석', gm:'https://maps.app.goo.gl/FpXRPqxJLFYkHMih7', jjh:true},
+ {cat:'food', tier:'must', name:'토리키조쿠 타니마치욘초메점 (鳥貴族)', lat:34.6820, lng:135.5175, note:'Day1 저녁 · 숙소 도보권 · 전 메뉴 균일가 야키토리 체인 · 태블릿 주문 · 가성비 최강', menu:'모모쿠시(닭다리 꼬치)·츠쿠네(닭완자)·토리키조쿠야키 · 메가 하이볼/생맥주 동일가', q:'鳥貴族 谷町4丁目店'},
+ {cat:'food', tier:'must', name:'세계에서 제일 한가한 라멘바 (世界一暇なラーメン屋)', lat:34.6925, lng:135.4900, note:'⚠ 일요일 정기휴무 · 토요일은 점심(11:00–14:30)만 영업 — Day2 점심이 유일한 기회 · 나카노시마 다이빌 2F · 이름과 달리 웨이팅 10~30분', menu:"WITCH'S RED — 조개·닭 육수 간장 라멘. 그릇을 덮는 대판 차슈. COEDO 맥주 페어링", gm:'https://maps.app.goo.gl/FpXRPqxJLFYkHMih7', jjh:true},
+ {cat:'food', tier:'must', name:'아지노야 (味乃家) — 오코노미야키·볶음우동', lat:34.6673, lng:135.5010, note:'난바역 도보 1분 · 50년 노포 · Day2 저녁 확정 · 1인 1메뉴 필수 · 웨이팅 30~60분 — 오픈 직후나 늦게', menu:'오코노미야키 + 야키소바(볶음면) 둘 다 시켜 나눠 먹기 · 소스가 달면 「소스 조금만」 요청 가능', q:'味乃家 難波'},
+ {cat:'food', tier:'opt', name:'에도가와 난바워크점 (江戸川) — 장어덮밥', lat:34.6660, lng:135.5015, note:'난바워크 지하 · 11:00 오픈 · 이번 점심은 타즈야로 예약했지만, 장어가 당길 때 좋은 대안 · 난바역 직결', menu:'우나기동(장어덮밥) · 장어 코스 · 런치 2,000–3,000¥/인', q:'江戸川 なんばウォーク店 うなぎ'},
+ {cat:'food', tier:'must', name:'야키토리 — 우라난바 골목', lat:34.6640, lng:135.5040, note:'도톤보리 뒷골목(우라난바) · Day1 저녁 · 골목 전체가 야키토리·이자카야 밀집이라 웨이팅 시 옆집으로 · 관광객 적고 로컬 비중 높음', menu:'닭 부위별 숯불꼬치(3개 한 접시 600¥ 안팎) · 야키토리동 · 생맥주와 함께', q:'裏なんば 焼き鳥'},
  {cat:'food', tier:'opt', name:'와라야키야 기타신치 본점 (わらやき屋)', lat:34.6975, lng:135.4975, note:'짚불 타타키(와라야키) 이자카야 · 기타신치 · Day2 라멘 후 2차 후보', menu:'짚불에 겉만 훈연해 구운 가다랑어 타타키(藁焼き鰹たたき) — 소금·유자폰즈로. 하이볼·토사 사케와 궁합', gm:'https://maps.app.goo.gl/v9A3cHN2VCkv8nuDA', jjh:true},
  {cat:'food', tier:'opt', name:'만료 히고바시점 (万両)', lat:34.6900, lng:135.4935, note:'오사카 대표 야키니쿠 명가의 지점 · 예약 필수(1–2주 전) — 예약 성공 시 저녁 일정 승격 추천', menu:'간장 양념 등심 조로스(上ロース)·소금 시오로스 — 소 한 마리 통매입이라 희소 부위도 주문 가능', gm:'https://maps.app.goo.gl/1oCweowSXNAM2WMK7', jjh:true},
  {cat:'food', tier:'opt', name:'히로시다이 제트 (弘大Z)', lat:34.6995, lng:135.4790, note:'후쿠시마역 인근 · 정준하 영상 방문지', menu:'메뉴 정보 미확인 — 영상·구글맵 리뷰 참고 권장', gm:'https://maps.app.goo.gl/8zPnnvqQLJsmASLw6', jjh:true},
- {cat:'food', tier:'must', name:'겐베에 난바점 (源兵衛)', lat:34.6656, lng:135.5023, note:'덩어리 스테이크 명물 · 10g 단위 주문·가성비 · 오픈~19시 하이볼 99¥ · Day1 저녁 확정', menu:'명물 덩어리 스테이크(塊肉) — 400g 안팎 블록을 고르면 4단계 화입으로 미디엄레어로. 와사비·가고시마 간장 등 10여 가지 양념 + 니코미(소힘줄 조림)', q:'源兵衛 なんば店'},
  {cat:'food', tier:'opt', name:'하루코마 본점 (春駒)', lat:34.7075, lng:135.5107, note:'텐진바시스지 상점가 스시 노포 · 크고 싸고 존맛 · 웨이팅 김 — 오픈 직후 방문 권장 · 텐마 권역', menu:'네타(회)가 밥을 덮는 두툼한 스시 — 아나고(바다장어)·토로·성게 인기, 접시당 가격이 착함', q:'春駒 本店 天神橋'},
- {cat:'food', tier:'must', name:'551 호라이 (蓬莱) — 간사이공항점·난바 본점', lat:34.6640, lng:135.5008, note:'오사카 부타만의 대명사 · Day1 도착 직후 공항점에서 신고식, 난바 본점은 야식 포장용 · 돼지고기라 한국 반입 불가(현장 취식만)', menu:'부타만(돼지고기 찐빵) 1개 210¥ — 갓 쪄낸 걸 현장에서. 슈마이·아이스캔디도 별미', q:'551蓬莱 本店'},
+ {cat:'food', tier:'must', name:'551 호라이 간사이공항점 (蓬莱)', lat:34.4347, lng:135.2440, note:'Day1 도착 직후 · 오사카 부타만의 대명사 — 공항 신고식용. 돼지고기라 한국 반입 불가(현장 취식만)', menu:'부타만(돼지고기 찐빵) 1개 210¥ — 갓 쪄낸 것. 슈마이·아이스캔디도 별미', q:'551蓬莱 関西空港店'},
+ {cat:'food', tier:'opt', name:'스시 사카바 사시스 (鮨酒場 sasisu)', lat:34.6663, lng:135.5010, note:'난바워크 3번가 지하 · 이번 일정엔 미포함이지만 난바에서 스시가 당길 때 좋은 대안 · 이른 저녁이 웨이팅 적음', menu:'제철 니기리와 안주를 술과 함께 — 카운터 사카바형 스시집', q:'鮨酒場 sasisu なんばウォーク'},
  {cat:'food', tier:'must', name:'아이즈야 난바 본점', lat:34.6614, lng:135.4993, note:'타코야키 원조(1933) · 소스 없이 먹는 오리지널 · 미슐랭 빕구르망', menu:'원조 타코야키(소스 없이 반죽 간으로 먹음)와 그 전신 라지오야키(소힘줄·곤약) — 반반 세트 추천', q:'会津屋 なんば店'},
- {cat:'food', tier:'must', name:'요시토라 (장어)', lat:34.6822, lng:135.5240, note:'오사카성 인근 100년 노포 장어 전문 · Day2 점심 후보', menu:'우나쥬(장어덮밥 찬합) — 간사이식 직화구이라 겉이 바삭. 우나기동 등급별 선택', q:'吉寅 大阪 うなぎ'},
+ {cat:'food', tier:'opt', name:'요시토라 (장어)', lat:34.6822, lng:135.5240, note:'오사카성 인근 100년 장어 노포 — 이번엔 에도가와(난바워크)로 대체. 오사카성 근처 점심 여유가 생기면 대안', menu:'우나쥬(장어덮밥 찬합) — 간사이식 직화구이라 겉이 바삭', q:'吉寅 大阪 うなぎ'},
  {cat:'food', tier:'opt', name:'미즈노 (오코노미야키)', lat:34.6686, lng:135.5023, note:'도톤보리 · 미슐랭 빕구르망 · 웨이팅 30분+ 각오', menu:'야마이모야키 — 밀가루 대신 참마 반죽 100%로 부드러운 시그니처 오코노미야키', q:'美津の 道頓堀'},
  {cat:'food', tier:'opt', name:'잇토쿠 쿠시카츠 도톤보리 에비스바시점', lat:34.6679, lng:135.5013, note:'신세카이식 쿠시카츠를 난바에서 · 합리적 가격', menu:'쿠시카츠 모둠(소고기·새우·연근 등) — 얇고 바삭한 튀김옷, 소스 두 번 찍기 금지 룰', q:'串カツいっとく 道頓堀戎橋店'},
  {cat:'food', tier:'opt', name:'우메키타 플로어', lat:34.7059, lng:135.4937, note:'그랜드 프론트 오사카 북관 6F 식당가 · Day2 저녁 후보', menu:'바·레스토랑 10여 곳이 한 층에 — 이자카야·와인바·해산물 등 골라 먹는 구조, 심야 영업', q:'UMEKITA FLOOR グランフロント大阪', jjh:true},
@@ -467,24 +479,29 @@ const POIS = [
  {cat:'dessert', tier:'opt', name:'리쿠로 오지상 치즈케이크 난바 본점', lat:34.6656, lng:135.5019, note:'갓 구운 수플레 치즈케이크 · 흔들리는 도장 세리머니', menu:'갓 구운 수플레 치즈케이크 1홀(덴마크 크림치즈·바닥엔 건포도) — 나올 때 도장 찍는 세리머니', q:'りくろーおじさんの店 なんば本店'},
  {cat:'dessert', tier:'opt', name:'준킷사 아메리칸', lat:34.6689, lng:135.5019, note:'1946년 레트로 킷사텐 · 냉방 피난처 겸용', menu:'크림소다와 두툼한 홋케이크 — 쇼와 시대 그대로의 인테리어에서', q:'純喫茶アメリカン 道頓堀'},
  // 관광 포인트 (지도 참고용)
+ {cat:'spot', tier:'', name:'헵파이브 대관람차 (HEP FIVE)', lat:34.7048, lng:135.5010, note:'Day2 15:00 · 주유패스 무료(정가 800¥) · 106m · 쇼핑몰 일체형 · 우메다', q:'HEP FIVE 観覧車 梅田'},
+ {cat:'spot', tier:'', name:'우메다 스카이빌딩 공중정원', lat:34.7052, lng:135.4903, note:'Day2 10:00 · 주유패스 무료는 15시 이전 한정(정가 1,500¥) · 옥상 전망', q:'梅田スカイビル 空中庭園'},
+ {cat:'spot', tier:'', name:'츠텐카쿠 전망대 (신세카이)', lat:34.6524, lng:135.5063, note:'Day2 16:30 · 주유패스 무료(정가 1,200¥) · 1912년 초대 타워의 복원판 · 레트로 신세카이 골목 · 우메다→난바 남하 경로 위에 있어 동선 손실 없음', q:'通天閣 新世界'},
+ {cat:'spot', tier:'', name:'원더 크루즈 승선장 (도톤보리)', lat:34.6690, lng:135.5030, note:'Day2 18:20 · 주유패스 무료 · ★예약 필수(예약자 우선 탑승) · 티켓 카운터 16:45 오픈 · 도톤보리 수상 야경', q:'ワンダークルーズ 道頓堀 乗船場'},
  {cat:'spot', tier:'', name:'오사카성 천수각', lat:34.6873, lng:135.5262, note:'Day2 오전 · 입장 1,200¥', q:'大阪城天守閣'},
  {cat:'spot', tier:'', name:'오사카 역사박물관', lat:34.6826, lng:135.5209, note:'냉방 피난처 · 600¥', q:'大阪歴史博物館'},
  {cat:'spot', tier:'', name:'카라호리 상점가', lat:34.6740, lng:135.5180, note:'Day1 저녁 산책 · 로컬 아케이드', q:'空堀商店街'},
  {cat:'spot', tier:'', name:'호젠지요코초', lat:34.6678, lng:135.5030, note:'물이끼 부동명왕 · 조용한 돌바닥 골목', q:'法善寺横丁'},
  {cat:'spot', tier:'', name:'나카노시마 중앙공회당', lat:34.6934, lng:135.5048, note:'Day2 해질녘 · 다이쇼 건축', q:'大阪市中央公会堂'},
- {cat:'spot', tier:'', name:'돈키호테 도톤보리점', lat:34.6687, lng:135.5015, note:'Day3 오전 쇼핑 · 24시간 · 면세', q:'ドン・キホーテ 道頓堀店'},
+ {cat:'spot', tier:'', name:'돈키호테 난바센니치마에점', lat:34.6650, lng:135.5030, note:'Day3 오전 쇼핑 · 24시간 · 면세 · 센니치마에 도구야스지 인근', q:'ドン・キホーテ なんば千日前店'},
  {cat:'spot', tier:'', name:'시텐노지 (C안)', lat:34.6533, lng:135.5164, note:'593년 창건 · 시내 최고(最古) 사찰 · 한산', q:'四天王寺'},
 ];
 
 /* ── 패스 분석 데이터 ── */
 const ATTR = [
- {name:'오사카성 천수각', price:1200, on:true},
- {name:'오사카 역사박물관', price:600, on:false},
- {name:'우메다 스카이빌딩 공중정원 (패스는 15시 이전만 무료)', price:1500, on:true},
- {name:'오사카성 고자부네 뱃놀이', price:1500, on:true},
- {name:'츠텐카쿠 전망대', price:1200, on:false},
- {name:'텐노지 동물원', price:500, on:false},
- {name:'덴포잔 대관람차', price:900, on:true},
+ {name:'오사카성 천수각 (D1)', price:1200, on:true},
+ {name:'오사카성 고자부네 뱃놀이 (D1)', price:1500, on:true},
+ {name:'우메다 스카이빌딩 공중정원 (D2 · 15시 이전만 무료)', price:1500, on:true},
+ {name:'헵파이브 대관람차 (D2)', price:800, on:true},
+ {name:'원더 크루즈 (D2 · 예약 완료)', price:1500, on:true},
+ {name:'츠텐카쿠 전망대 (선택)', price:1200, on:false},
+ {name:'오사카 역사박물관 (선택)', price:600, on:false},
+ {name:'덴포잔 대관람차 (선택)', price:900, on:false},
 ];
 
 /* ═══════════ 렌더링 ═══════════ */
@@ -503,13 +520,17 @@ function fmt(n){return n.toLocaleString('ko-KR')}
 function renderDays(){
   const host=$('#daysHost'); host.innerHTML='';
   DAYS.forEach(d=>{
-    let sum=0;
+    let fixed=0, meal=0;
     const rail=d.stops.map(s=>{
-      sum+=s.costJpy||0;
+      fixed+=s.costJpy||0; meal+=s.meal||0;
       const chips=[];
-      if(s.costJpy) chips.push(`<span class="chip cost">¥${fmt(s.costJpy)}${s.costLabel?' ('+s.costLabel+')':''}</span>`);
-      else if(s.kind==='spot'&&s.costJpy===0) chips.push(`<span class="chip free">무료</span>`);
+      if(s.costKrw) chips.push(`<span class="chip cost">₩${fmt(s.costKrw)}${s.costLabel?' ('+s.costLabel+')':''}</span>`);
+      else if(s.costJpy) chips.push(`<span class="chip cost">¥${fmt(s.costJpy)}${s.costLabel?' ('+s.costLabel+')':''}</span>`);
+      else if(s.costLabel==='주유패스') chips.push(`<span class="chip free">주유패스</span>`);
+      else if(s.kind==='spot'&&s.costJpy===0) chips.push(`<span class="chip free">패스 무료</span>`);
+      if(s.meal) chips.push(`<span class="chip meal">${s.mealLabel||'¥'+fmt(s.meal)}</span>`);
       if(s.dur) chips.push(`<span class="chip dur">${s.dur}</span>`);
+      if(s.book) chips.push(`<span class="chip book">사전예약 — ${s.book}</span>`);
       return `<div class="stop ${s.kind}">
         <div class="t">${s.t}</div>
         <div class="track"><div class="dot"></div></div>
@@ -517,10 +538,14 @@ function renderDays(){
         ${s.desc?`<div class="desc">${s.desc}</div>`:''}
         ${chips.length?`<div class="chips">${chips.join('')}</div>`:''}</div></div>`;
     }).join('');
+    const total=fixed+meal;
     host.insertAdjacentHTML('beforeend',
       `<h3>Day ${d.id.slice(1)} · ${d.date} — ${d.title}</h3>
        <div class="rail">${rail}</div>
-       <div class="daycost">이 날 고정비(교통+입장, 2인): <b>¥${fmt(sum)}</b> ≈ ₩<span class="krwOf" data-jpy="${sum}"></span></div>`);
+       <div class="daycost">
+         <div>교통·입장 <b>¥${fmt(fixed)}</b> · 식사·간식 <b>¥${fmt(meal)}</b></div>
+         <div style="margin-top:4px">이 날 합계 <b>¥${fmt(total)}</b> ≈ ₩<span class="krwOf" data-jpy="${total}"></span> <span class="note-est">(2인 · 일일예산 ₩200,000 대비)</span></div>
+       </div>`);
   });
 }
 
@@ -528,25 +553,33 @@ function renderDays(){
 function fx(){return parseFloat($('#fxRate').value)||9.2}
 function renderBudget(){
   const r=fx();
-  const daily=600000, flight=699674, hotel=298197;
+  const daily=600000, flight=699674, hotel=298197, pass=91800, rapit=26400;
+  const esim=parseInt($('#esimKrw').value)||0;
+  const ins=parseInt($('#insKrw').value)||0;
   $('#dailyJpy').textContent='¥'+fmt(Math.round(daily/r));
-  const grand=flight+hotel+daily;
+  const grand=flight+hotel+daily+esim+ins+pass+rapit;
   $('#grandKrw').textContent='₩'+fmt(grand);
   $('#grandJpy').textContent='(현지경비 ¥'+fmt(Math.round(daily/r))+')';
   // 일자별
   const tb=$('#tblDaily tbody'); tb.innerHTML='';
   DAYS.forEach(d=>{
-    const sum=d.stops.reduce((a,s)=>a+(s.costJpy||0),0);
-    const krw=Math.round(sum*r);
-    const items=d.stops.filter(s=>s.costJpy).map(s=>s.name.split('—')[0].split('(')[0].trim()).join(' · ');
+    const fixed=d.stops.reduce((a,s)=>a+(s.costJpy||0),0);
+    const fixedKrw=d.stops.reduce((a,s)=>a+(s.costKrw||0),0);
+    const mealJ=d.stops.reduce((a,s)=>a+(s.meal||0),0);
+    const sumJ=fixed+mealJ;
+    const krw=Math.round(sumJ*r)+fixedKrw;
+    const left=200000-krw;
     tb.insertAdjacentHTML('beforeend',
-      `<tr><td>${d.date}</td><td style="font-size:12.5px;color:#6B7080">${items||'—'}</td>
-       <td class="num">¥${fmt(sum)}</td><td class="num">₩${fmt(krw)}</td>
-       <td class="num" style="color:${200000-krw>0?'var(--indigo)':'var(--vermil)'}">₩${fmt(200000-krw)}</td></tr>`);
+      `<tr><td>${d.date}</td>
+       <td class="num">¥${fmt(fixed)}${fixedKrw?`<br><span class="note-est">+₩${fmt(fixedKrw)}</span>`:''}</td><td class="num">¥${fmt(mealJ)}</td>
+       <td class="num">₩${fmt(krw)}</td>
+       <td class="num" style="color:${left>0?'var(--indigo)':'var(--vermil)'}">₩${fmt(left)}</td></tr>`);
   });
   $$('.krwOf').forEach(el=>{el.textContent=fmt(Math.round(parseInt(el.dataset.jpy)*r))});
 }
 $('#fxRate').addEventListener('input',()=>{renderBudget(); saveSetting('fxRate',$('#fxRate').value)});
+$('#esimKrw').addEventListener('input',()=>{renderBudget(); saveSetting('esimKrw',$('#esimKrw').value)});
+$('#insKrw').addEventListener('input',()=>{renderBudget(); saveSetting('insKrw',$('#insKrw').value)});
 
 /* 패스 분석 */
 function renderPassChecks(){
@@ -570,7 +603,7 @@ function calcPass(){
   const metro=rides*fare;
   const solo=entry+metro;              // 개별
   const ecoTotal=eco+entry;            // 에코카드 + 개별입장
-  const amazing=3500;                  // 주유패스 (입장+교통 포함)
+  const amazing=6120;                  // 주유패스 2일권 1인 45,900원÷7.5≈6,120¥ 환산(하루당은 절반)
   const best=Math.min(solo,ecoTotal,amazing);
   let name,detail;
   if(best===amazing){name='주유패스 1일권이 이득';detail=`주유패스 ¥3,500 vs 개별 ¥${fmt(solo)} — <b>¥${fmt(solo-amazing)} 절약</b>`;}
@@ -584,6 +617,7 @@ function calcPass(){
    <tr><td>엔조이 에코 카드 (¥${eco}) + 개별 입장</td><td class="num">¥${fmt(ecoTotal)}</td></tr>
    <tr><td>주유패스 1일권 (교통·입장 포함)</td><td class="num">¥${fmt(amazing)}</td></tr></table>`;
 }
+
 
 /* 지도 — MAPTILER_KEY가 있으면 한국어 라벨 벡터지도, 없으면 Leaflet 회색톤 */
 const color=p=> p.cat==='dessert'?'#A8802C' : p.cat==='spot'?'#4F7EA3' : (p.tier==='must'?'#C2452D':'#2C4770');
@@ -678,6 +712,8 @@ function initFirebase(){
       db.ref('settings').on('value',snap=>{
         const v=snap.val()||{};
         if(v.fxRate&&document.activeElement.id!=='fxRate'){$('#fxRate').value=v.fxRate;}
+        if(v.esimKrw&&document.activeElement.id!=='esimKrw'){$('#esimKrw').value=v.esimKrw;}
+        if(v.insKrw&&document.activeElement.id!=='insKrw'){$('#insKrw').value=v.insKrw;}
         renderBudget();
       });
     }catch(e){ console.error('Firebase init 실패:',e); }
