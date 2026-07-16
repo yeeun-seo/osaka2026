@@ -117,6 +117,8 @@ label.inline{font-size:13px;margin-right:14px;display:inline-flex;align-items:ce
 .poi a{color:var(--mizu);font-size:12px;white-space:nowrap;margin-left:auto}
 .ko-label{background:#fff;border:1px solid var(--line);border-radius:0;box-shadow:none;font-family:'IBM Plex Sans KR',sans-serif;font-size:11px;font-weight:600;color:var(--ink);padding:1px 5px}
 .ko-label::before{display:none}
+.mymap-btn{display:block;text-align:center;font-family:inherit;font-size:15px;font-weight:600;color:#fff;background:var(--indigo);border:none;padding:14px;text-decoration:none;letter-spacing:.02em;box-shadow:0 2px 0 var(--indigo-deep)}
+.mymap-btn:hover{background:var(--indigo-deep)}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#5A5F72;margin-top:4px}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
 
@@ -160,7 +162,7 @@ li{margin:4px 0}
 <header>
   <div class="eyebrow">Osaka · Midsummer · 2 nights 3 days</div>
   <h1>여름 오사카 냐홍-!<br>주현 &amp; 예은</h1>
-  <div class="subtitle">2026. 7. 31 (금) – 8. 2 (일) · 티웨이항공 직항 · <b>더위와의 전쟁</b></div>
+  <div class="subtitle">2026. 7. 31 (금) – 8. 2 (일) · 티웨이항공 직항 · <b>더위와의 전쟁, 성(城)과의 만남</b></div>
   <div class="flightline">
     <span>가는편 TW303 · ICN 10:50 → KIX 13:00</span>
     <span>오는편 TW304 · KIX 14:30 → ICN 16:30</span>
@@ -248,7 +250,7 @@ li{margin:4px 0}
   </div>
 
   <div class="box info">
-    <b>주신 순서 그대로 배치 · 기념일 일정은 삭제(한국 귀국)</b><br>
+    <b>주신 순서 그대로 배치 </b><br>
     <b>관광</b> — 오사카성·고자부네 <span class="chip">D1 오후</span> · 헵파이브 관람차+쇼핑몰 <span class="chip">D2 오전</span> · 우메다 공중정원 <span class="chip">D2 낮</span> · 원더크루즈 <span class="chip">D2 20:00</span> · 돈키호테 <span class="chip">D3 오전</span><br>
     <b>맛집</b> — 부타만 <span class="chip">D1 공항</span> · 토리키조쿠 야키토리 <span class="chip">D1 저녁</span> · 도미인 요나키소바 <span class="chip">D1 밤</span> · 라멘바 <span class="chip">D2 점심</span> · 오코노미야키+볶음우동 <span class="chip">D2 저녁</span> · 타즈야 난바 <span class="chip">D3 점심</span><br>
     <span class="note-est">2일차 오후(15:40~18:00)는 대욕장 낮 휴식으로 채웠습니다 — 한여름 가장 더운 시간대 회피. 냉방 쇼핑(난바파크스)을 원하시면 바꿔드립니다.</span>
@@ -269,7 +271,7 @@ li{margin:4px 0}
   </div>
 
   <div class="box gold">
-    <b>오사카성 로드트레인 요금(선택)</b> — 성인 편도 400엔 (모리노미야/JO-TERRACE ↔ 호코쿠신사 앞, 09:30–17:30 운행).<br>
+    <b>오사카성 로드트레인 요금</b> — 성인 편도 400엔 (모리노미야/JO-TERRACE ↔ 호코쿠신사 앞, 09:30–17:30 운행).<br>
     <b>1인 왕복 800엔 · 2인 왕복 1,600엔</b>. 호코쿠신사 앞에서 천수각까지는 도보 2–3분입니다. 한여름 오사카성 공원 도보 20분을 건너뛰는 최고의 투자.
   </div>
 </section>
@@ -277,7 +279,11 @@ li{margin:4px 0}
 <!-- ══════════ 맛집 지도 ══════════ -->
 <section class="tab" id="tab-food">
   <h2>지도 <span class="tag must">필수</span> <span class="tag opt">선택</span> <span class="tag jjh">정준하</span></h2>
-  <p class="lead">구글 내 지도(한국어) 연동. 핀을 누르면 태그·대표 메뉴가 뜨고, 스마트폰 구글맵 앱 → 저장됨 → 지도에서 같은 지도를 열어 바로 길찾기할 수 있습니다.</p>
+
+  <a class="mymap-btn" href="https://maps.app.goo.gl/WwLSgJT5wmDwkmKd6" target="_blank" rel="noopener">
+    ★ 우리 구글 지도 열기 (저장한 장소 모음) ↗
+  </a>
+  <p class="lead" style="margin-top:8px">위 버튼은 예은이 저장한 구글 지도로 연결됩니다. 스마트폰에서 열면 구글맵 앱에서 바로 길찾기가 됩니다. 아래 지도와 목록은 이 사이트에 따로 정리해 둔 맛집·관광 핀입니다.</p>
 
   <div class="box info">
     <b>정준하 유튜브 맛집 전체 반영 완료</b> — 1탄 4곳(세계에서 제일 한가한 라멘바 · 와라야키야 기타신치 · 만료 히고바시 · 히로시다이 제트) + 2탄 2곳(원조 믹스주스 · 우메키타 플로어).
