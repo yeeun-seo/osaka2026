@@ -9,10 +9,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
 :root{
-  --paper:#F6F7F4; --ink:#22253A;
-  --indigo:#2C4770; --indigo-deep:#1B2C4A;
-  --gold:#A8802C; --vermil:#C2452D; --mizu:#4F7EA3;
-  --line:#C9CFD8; --soft:#EDEFEA;
+  --paper:#F0F7F9; --ink:#173A44;
+  --indigo:#1E7A8C; --indigo-deep:#0E4C5B;
+  --gold:#1C8CA8; --vermil:#E4694A; --mizu:#39A7C4;
+  --line:#BBD9E0; --soft:#E1EEF1;
   --mono:'IBM Plex Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -20,7 +20,7 @@ body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans KR',-ap
 .wrap{max-width:880px;margin:0 auto;padding:0 16px 80px}
 
 /* ── 마스트헤드 ── */
-header{border-bottom:3px double var(--indigo-deep);padding:28px 0 18px;margin-bottom:0}
+header{border-bottom:3px double var(--indigo-deep);padding:28px 16px 18px;margin:0 -16px;background:linear-gradient(160deg,#DDF0F4 0%,#EAF6F8 45%,var(--paper) 100%)}
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--gold);text-transform:uppercase}
 h1{font-family:'Gowun Batang',serif;font-weight:700;font-size:clamp(26px,5vw,38px);line-height:1.25;margin:6px 0 4px}
 .subtitle{color:#5A5F72;font-size:13.5px}
@@ -73,7 +73,7 @@ tr.total td.num{font-size:13.5px}
 .chips{margin-top:5px;display:flex;gap:6px;flex-wrap:wrap}
 .chip{font-family:var(--mono);font-size:11px;padding:1.5px 7px;border:1px solid var(--line);color:#4A4F62;background:#fff}
 .chip.cost{border-color:var(--gold);color:var(--gold)}
-.chip.meal{border-color:#7A5C3E;color:#7A5C3E}
+.chip.meal{border-color:#2A7D6E;color:#2A7D6E}
 .chip.book{border-color:var(--vermil);color:var(--vermil);font-weight:500}
 .chip.dur{border-color:var(--mizu);color:var(--mizu)}
 .chip.free{border-color:#9AA;color:#789}
@@ -86,7 +86,7 @@ tr.total td.num{font-size:13.5px}
 .tag{display:inline-block;font-size:10.5px;font-weight:600;padding:1px 7px;letter-spacing:.05em;vertical-align:2px}
 .tag.must{background:var(--vermil);color:#fff}
 .tag.opt{border:1px solid #9AA0B0;color:#6B7080}
-.tag.jjh{background:var(--indigo-deep);color:#F2D28A}
+.tag.jjh{background:var(--indigo-deep);color:#BFEAF2}
 .tag.pend{border:1px dashed var(--gold);color:var(--gold)}
 .box{border:1px solid var(--line);background:#fff;padding:14px 16px;margin:12px 0;font-size:13.5px}
 .box.warn{border-left:4px solid var(--vermil)}
@@ -100,6 +100,7 @@ label.inline{font-size:13px;margin-right:14px;display:inline-flex;align-items:ce
 .checkrow{display:flex;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px solid var(--soft);font-size:13.5px}
 .checkrow input[type=checkbox]{width:16px;height:16px;accent-color:var(--indigo)}
 .checkrow .p{margin-left:auto;font-family:var(--mono);font-size:12.5px;color:#4A4F62}
+.passgroup{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--gold);margin:14px 0 4px;padding-bottom:4px;border-bottom:1px solid var(--line)}
 .verdict{margin-top:14px;padding:14px 16px;border:1.5px solid var(--indigo-deep);background:#fff}
 .verdict .v-title{font-family:'Gowun Batang',serif;font-weight:700;font-size:16px}
 .verdict.win .v-title{color:var(--vermil)}
@@ -137,7 +138,7 @@ label.inline{font-size:13px;margin-right:14px;display:inline-flex;align-items:ce
 .addrow input{flex:1;width:auto;border:none;padding:11px 12px;font-family:inherit;font-size:14px;background:#FCFCFA}
 .addrow .addbtn{border:none;background:var(--indigo-deep);color:#fff;font-family:inherit;font-size:13.5px;font-weight:600;padding:0 18px;cursor:pointer}
 .addrow .addbtn:hover{background:var(--indigo)}
-#fbBanner{font-size:12.5px;padding:10px 14px;margin-bottom:14px;border:1px dashed var(--gold);color:#7A5F1E;background:#FDFBF4}
+#fbBanner{font-size:12.5px;padding:10px 14px;margin-bottom:14px;border:1px dashed var(--gold);color:#0E5C6B;background:#E8F4F7}
 #fbBanner.ok{border:1px solid var(--mizu);color:#2F5F80;background:#F2F7FA}
 
 .hotel{border:1px solid var(--line);background:#fff;padding:16px;margin:12px 0}
@@ -158,8 +159,8 @@ li{margin:4px 0}
 
 <header>
   <div class="eyebrow">Osaka · Midsummer · 2 nights 3 days</div>
-  <h1>오사카 한여름 답사기<br>주현 &amp; 예은</h1>
-  <div class="subtitle">2026. 7. 31 (금) – 8. 2 (일) · 티웨이항공 직항 · <b>더위와의 전쟁, 성(城)과의 만남</b></div>
+  <h1>여름 오사카 냐홍-!<br>주현 &amp; 예은</h1>
+  <div class="subtitle">2026. 7. 31 (금) – 8. 2 (일) · 티웨이항공 직항 · <b>더위와의 전쟁</b></div>
   <div class="flightline">
     <span>가는편 TW303 · ICN 10:50 → KIX 13:00</span>
     <span>오는편 TW304 · KIX 14:30 → ICN 16:30</span>
@@ -247,7 +248,7 @@ li{margin:4px 0}
   </div>
 
   <div class="box info">
-    <b>주신 순서 그대로 배치 </b><br>
+    <b>주신 순서 그대로 배치 · 기념일 일정은 삭제(한국 귀국)</b><br>
     <b>관광</b> — 오사카성·고자부네 <span class="chip">D1 오후</span> · 헵파이브 관람차+쇼핑몰 <span class="chip">D2 오전</span> · 우메다 공중정원 <span class="chip">D2 낮</span> · 원더크루즈 <span class="chip">D2 20:00</span> · 돈키호테 <span class="chip">D3 오전</span><br>
     <b>맛집</b> — 부타만 <span class="chip">D1 공항</span> · 토리키조쿠 야키토리 <span class="chip">D1 저녁</span> · 도미인 요나키소바 <span class="chip">D1 밤</span> · 라멘바 <span class="chip">D2 점심</span> · 오코노미야키+볶음우동 <span class="chip">D2 저녁</span> · 타즈야 난바 <span class="chip">D3 점심</span><br>
     <span class="note-est">2일차 오후(15:40~18:00)는 대욕장 낮 휴식으로 채웠습니다 — 한여름 가장 더운 시간대 회피. 냉방 쇼핑(난바파크스)을 원하시면 바꿔드립니다.</span>
@@ -268,7 +269,7 @@ li{margin:4px 0}
   </div>
 
   <div class="box gold">
-    <b>오사카성 로드트레인 요금</b> — 성인 편도 400엔 (모리노미야/JO-TERRACE ↔ 호코쿠신사 앞, 09:30–17:30 운행).<br>
+    <b>오사카성 로드트레인 요금(선택)</b> — 성인 편도 400엔 (모리노미야/JO-TERRACE ↔ 호코쿠신사 앞, 09:30–17:30 운행).<br>
     <b>1인 왕복 800엔 · 2인 왕복 1,600엔</b>. 호코쿠신사 앞에서 천수각까지는 도보 2–3분입니다. 한여름 오사카성 공원 도보 20분을 건너뛰는 최고의 투자.
   </div>
 </section>
@@ -301,7 +302,7 @@ li{margin:4px 0}
 <!-- ══════════ 패스 분석 ══════════ -->
 <section class="tab" id="tab-pass">
   <h2>패스 손익 분석기</h2>
-  <p class="lead">방문할 곳을 체크하고 지하철 탑승 횟수를 넣으면, <b>개별 결제 vs 주유패스 vs 엔조이 에코 카드</b>를 하루 단위로 비교합니다. 금액은 1인 기준.</p>
+  <p class="lead">아래에서 <b>주유패스로 무료 입장되는 시설</b>을 체크하면, 체크한 시설의 정가 합계가 자동으로 계산됩니다. 이 합계가 패스값을 넘으면 그만큼 이득입니다. 위 5개는 이번 일정에 이미 포함된 시설이고, 아래는 시간이 남을 때 추가로 갈 수 있는 후보들입니다. 금액은 1인 기준.</p>
 
   <h3>기준 요금 (2026.7 조사)</h3>
   <table>
@@ -494,14 +495,28 @@ const POIS = [
 
 /* ── 패스 분석 데이터 ── */
 const ATTR = [
- {name:'오사카성 천수각 (D1)', price:1200, on:true},
- {name:'오사카성 고자부네 뱃놀이 (D1)', price:1500, on:true},
- {name:'우메다 스카이빌딩 공중정원 (D2 · 15시 이전만 무료)', price:1500, on:true},
- {name:'헵파이브 대관람차 (D2)', price:800, on:true},
- {name:'원더 크루즈 (D2 · 예약 완료)', price:1500, on:true},
- {name:'츠텐카쿠 전망대 (선택)', price:1200, on:false},
- {name:'오사카 역사박물관 (선택)', price:600, on:false},
- {name:'덴포잔 대관람차 (선택)', price:900, on:false},
+ // ── 이번 일정에 포함된 시설 (기본 체크) ──
+ {name:'오사카성 천수각 (D1 일정)', price:1200, on:true},
+ {name:'오사카성 고자부네 뱃놀이 (D1 일정)', price:1500, on:true},
+ {name:'우메다 스카이빌딩 공중정원 (D2 일정 · 15시 이전만 무료)', price:1500, on:true},
+ {name:'헵파이브 대관람차 (D2 일정)', price:800, on:true},
+ {name:'원더 크루즈 (D2 일정 · 예약 완료)', price:1500, on:true},
+ // ── 주유패스로 갈 수 있는 다른 후보 (체크 해제) ──
+ {name:'츠텐카쿠 전망대 (신세카이)', price:1200, on:false},
+ {name:'츠텐카쿠 타워 슬라이더', price:1000, on:false},
+ {name:'덴포잔 대관람차 (베이 지역)', price:900, on:false},
+ {name:'톤보리 리버크루즈', price:1500, on:false},
+ {name:'나카노시마 리버크루즈', price:1500, on:false},
+ {name:'오사카 수상버스 아쿠아라이너', price:1800, on:false},
+ {name:'오사카성 니시노마루 정원', price:200, on:false},
+ {name:'오사카성 고자부네 미라이자 (피규어뮤지엄)', price:1000, on:false},
+ {name:'오사카 역사박물관', price:600, on:false},
+ {name:'시텐노지 (본방·정원)', price:800, on:false},
+ {name:'덴노지 동물원', price:500, on:false},
+ {name:'오사카 시립 주택박물관', price:600, on:false},
+ {name:'국립국제미술관 (컬렉션전)', price:430, on:false},
+ {name:'가미가타 우키요에관', price:700, on:false},
+ {name:'산타마리아 데이크루즈 ※7/16~8/31 무료 제외', price:0, on:false},
 ];
 
 /* ═══════════ 렌더링 ═══════════ */
@@ -585,9 +600,11 @@ $('#insKrw').addEventListener('input',()=>{renderBudget(); saveSetting('insKrw',
 function renderPassChecks(){
   const host=$('#passChecks'); host.innerHTML='';
   ATTR.forEach((a,i)=>{
+    if(i===0) host.insertAdjacentHTML('beforeend','<div class="passgroup">이번 일정에 포함된 시설</div>');
+    if(i===5) host.insertAdjacentHTML('beforeend','<div class="passgroup">주유패스로 갈 수 있는 다른 후보 (체크하면 합계에 반영)</div>');
     host.insertAdjacentHTML('beforeend',
       `<div class="checkrow"><input type="checkbox" id="at${i}" ${a.on?'checked':''}>
-       <label for="at${i}">${a.name}</label><span class="p">¥${fmt(a.price)}</span></div>`);
+       <label for="at${i}">${a.name}</label><span class="p">${a.price?'¥'+fmt(a.price):'—'}</span></div>`);
   });
   host.addEventListener('change',calcPass);
   $('#metroRides').addEventListener('input',calcPass);
@@ -623,7 +640,7 @@ function calcPass(){
 const color=p=> p.cat==='dessert'?'#A8802C' : p.cat==='spot'?'#4F7EA3' : (p.tier==='must'?'#C2452D':'#2C4770');
 const gmUrl=p=> p.gm || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.q)}`;
 const koName=p=> p.name.split(' (')[0];
-const popupHtml=p=>`<b>${p.name}</b>${p.jjh?' <span style="background:#1B2C4A;color:#F2D28A;font-size:10px;padding:1px 5px">정준하</span>':''}<br><span style="font-size:12px">${p.note}</span>${p.menu?`<br><span style="font-size:12px;color:#A8802C">대표 메뉴: ${p.menu}</span>`:''}<br><a href="${gmUrl(p)}" target="_blank" rel="noopener">구글맵 열기 ↗</a>`;
+const popupHtml=p=>`<b>${p.name}</b>${p.jjh?' <span style="background:#1B2C4A;color:#BFEAF2;font-size:10px;padding:1px 5px">정준하</span>':''}<br><span style="font-size:12px">${p.note}</span>${p.menu?`<br><span style="font-size:12px;color:#1C8CA8">대표 메뉴: ${p.menu}</span>`:''}<br><a href="${gmUrl(p)}" target="_blank" rel="noopener">구글맵 열기 ↗</a>`;
 
 function renderMap(){
   renderPoiLists();
