@@ -206,9 +206,8 @@ li{margin:4px 0}
         <td class="num">—</td><td class="num">63,400</td></tr>
       <tr><td>라피트 특급 편도 (2인, 공항→난바)<br><span class="note-est">7/31 14:05 · 1인 12,700원 고정 · 귀국은 난카이 급행 970¥/인 실비</span></td><td>확정</td>
         <td class="num">—</td><td class="num">25,400</td></tr>
-      <tr><td>e-SIM (2인)<br><span class="note-est">3일 데이터 · 확정 시 금액 수정</span></td><td>예상 <sup class="est">예상</sup></td>
-        <td class="num">—</td>
-        <td class="num"><input type="number" id="esimKrw" value="20000" step="1000" style="width:90px;text-align:right"></td></tr>
+      <tr><td>e-SIM (2인)<br><span class="note-est">3일 데이터 · 구매 완료</span></td><td>확정</td>
+        <td class="num">—</td><td class="num">12,320</td></tr>
       <tr><td>여행자 보험 (2인)<br><span class="note-est">가입 완료 · 고정</span></td><td>확정</td>
         <td class="num">—</td><td class="num">15,450</td></tr>
       <tr><td>일일 경비 (10만원 × 2인 × 3일)<br><span class="note-est">입장료 + 시내교통 + 식비 + 잡비 · 아래 표 참고 · ※주유패스·라피트는 위에서 별도 계상</span></td><td>계획</td>
@@ -563,7 +562,7 @@ function fx(){return parseFloat($('#fxRate').value)||9.2}
 function renderBudget(){
   const r=fx();
   const daily=600000, flight=699674, hotel=298197, pass=63400, rapit=25400;
-  const esim=parseInt($('#esimKrw').value)||0;
+  const esim=12320;
   const ins=15450;
   $('#dailyJpy').textContent='¥'+fmt(Math.round(daily/r));
   const grand=flight+hotel+daily+esim+ins+pass+rapit;
@@ -587,7 +586,6 @@ function renderBudget(){
   $$('.krwOf').forEach(el=>{el.textContent=fmt(Math.round(parseInt(el.dataset.jpy)*r))});
 }
 $('#fxRate').addEventListener('input',()=>{renderBudget(); saveSetting('fxRate',$('#fxRate').value)});
-$('#esimKrw').addEventListener('input',()=>{renderBudget(); saveSetting('esimKrw',$('#esimKrw').value)});
 
 /* 패스 분석 */
 function renderPassChecks(){
@@ -722,7 +720,6 @@ function initFirebase(){
       db.ref('settings').on('value',snap=>{
         const v=snap.val()||{};
         if(v.fxRate&&document.activeElement.id!=='fxRate'){$('#fxRate').value=v.fxRate;}
-        if(v.esimKrw&&document.activeElement.id!=='esimKrw'){$('#esimKrw').value=v.esimKrw;}
         renderBudget();
       });
     }catch(e){ console.error('Firebase init 실패:',e); }
